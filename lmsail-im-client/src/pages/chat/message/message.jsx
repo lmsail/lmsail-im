@@ -19,7 +19,7 @@ class Message extends Component {
 
         // 监听加载历史消息事件
         PubSub.subscribe('messageLoadMore', (msg, data) => {
-            this.setState({ loadmore: false, showMoreText: data.length >= 15 })
+            this.setState({ loadmore: false, showMoreText: data && data.length >= 15 })
         });
 
         // 初始化state

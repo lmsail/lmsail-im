@@ -61,10 +61,13 @@ const user = (state = initUser, action) => {
 
         case RECEIVE_CHAT_MSG: // 收到消息时
             // 更新 contacts 数据
-            const { sendUserInfo, send_id } = action.data
+            let { sendUserInfo, send_id } = action.data
             const contact = state.contacts
             const index = contact.findIndex(user => user.friend_id === send_id)
             if(index < 0) {
+                // 直接追加的话，user_id 与 friend_id 是颠倒的
+                const { user_id, friend_id } = sendUserInfo;
+                sendUserInfo['user_id'] = friend_id; sendUserInfo['friend_id'] = user_id;
                 contact.unshift(sendUserInfo)
             } else { // 改变位置
                 contact[index]['last_mess'] = sendUserInfo.last_mess

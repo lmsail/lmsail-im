@@ -1,0 +1,66 @@
+/**
+ * 通讯录数据
+ */
+
+export const mailList = [
+    {
+        "area":"上海-浦东",
+        "autograph":"不是每个人都能成为自己想要的样子，但每个人，都可以努力成为自己想要的样子.",
+        "avatar":"http://img1.imgtn.bdimg.com/it/u=1186528863,3178811360&fm=26&gp=0.jpg",
+        "id":2,
+        "nick_remark":"小爽",
+        "nickname":"郑爽",
+        "phone":18899888899,
+        "remark":"哈哈哈，听说你是我的粉丝",
+        "status":1,
+        "time":"1天前"
+    },
+    {
+        "area":"北京-北京",
+        "autograph":"不是每个人都能成为自己想要的样子，但每个人，都可以努力成为自己想要的样子.",
+        "avatar":"https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=4082095625,4197768517&fm=26&gp=0.jpg",
+        "id":4,
+        "nick_remark":"宋茜",
+        "nickname":"宋茜",
+        "phone":18899888899,
+        "remark":"最近上了部新戏，你觉得怎么样啊",
+        "status":1,
+        "time":"2天前"
+    },
+    {
+        "area":"北京-北京",
+        "autograph":"不是每个人都能成为自己想要的样子，但每个人，都可以努力成为自己想要的样子.",
+        "avatar":"https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2714458446,426719835&fm=26&gp=0.jpg",
+        "id":6,
+        "nick_remark":"露思",
+        "nickname":"赵露思",
+        "phone":18899888899,
+        "remark":"很高兴认识你，希望可以做朋友",
+        "status":1,
+        "time":"3天前"
+    },
+    {
+        "area":"北京-北京",
+        "autograph":"不是每个人都能成为自己想要的样子，但每个人，都可以努力成为自己想要的样子.",
+        "avatar":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599725631785&di=222a2b16665394534032652c8b7234ea&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170828%2Fbca4530398cb45caa3101da954bc8a81.jpeg",
+        "id":3,
+        "nick_remark":"亦非",
+        "nickname":"刘亦菲",
+        "phone":18899888899,
+        "remark":"怎么好久没来找我了，快来啊，好无聊",
+        "status":1,
+        "time":"一周前"
+    },
+    {
+        "area":"浙江杭州",
+        "autograph":"如果`云`知道，逃不开`淘宝`的牢...",
+        "avatar":"https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2387536093,3967115426&fm=26&gp=0.jpg",
+        "id":7,
+        "nick_remark":"马爸爸",
+        "nickname":"马云",
+        "phone": "6666666666",
+        "remark":"兄弟，有单生意介绍给你",
+        "status":1,
+        "time":"147天前"
+    }
+]

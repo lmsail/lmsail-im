@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>socket.io 与 react-im server 的交互实例</title>
+    <style>.mess-btn,.mess-input{border:none;outline:0}.mess-input{width:calc(100% - 80px);height:100%}.mess-btn{height:20px;line-height:20px;width:60px;cursor:pointer;border-radius:3px;color:#fff;background:#4e71f2;font-size:12px;float:right}pre{margin: 0;}.window{height:500px;display:inline-block;border:1px solid #c3c3c3;width:50%;border-radius:4px;box-shadow:0 2px 3px 0 rgba(50,50,50,.11);text-align:left;vertical-align:top;margin:20px;}.window .header{line-height:30px;vertical-align:top;padding:2px 9px 0}.browser .header{background:#e8e8e8;border-radius:4px 4px 0 0;padding-bottom:5px}.browser .header .title{background:#fff;display:inline-block;width:calc(100% - 115px);border-radius:4px;padding:6px 14px 4px;margin-left:10px;vertical-align:middle;font:11px "Myriad Pro",Arial}.window .bullet{height:11px;width:11px;display:inline-block;background:#ccc;border-radius:100%;vertical-align:middle;margin-right:5px}.window .bullet-red{background:#df7065}.window .bullet-yellow{background:#e6bb46}.window .bullet-green{background:#5bcc8b}.body{text-align:left;overflow: auto;height: 430px;background: #f8f8f8;padding: 15px;font-size: 14px;line-height: 25px;}.success {color: #28a745;font-weight: 500;} .error {color: #dc3545;font-weight: 500;}</style>
+</head>
+<body>
+    <section style="text-align: center;margin-top: 50px">
+        <h1>
+            <img src="https://socket.io/css/images/logo.svg" alt="">&nbsp;&nbsp;
+            <img src="https://d33wubrfki0l68.cloudfront.net/e937e774cbbe23635999615ad5d7732decad182a/26072/logo-small.ede75a6b.svg" width="100">
+        </h1>
+        <h1>socket.io 与 react-im server 的交互实例</h1>
+        <div class="window browser">
+            <div class="header">
+                <span class="bullet bullet-red"></span>
+                <span class="bullet bullet-yellow"></span>
+                <span class="bullet bullet-green"></span>
+                <span class="title">
+                    <input type="text" id="message" placeholder="请输入发送的文字" class="mess-input" />
+                    <input type="button" value="发送" class="mess-btn" onclick="helper.send();" />
+                </span>
+            </div>
+            <div class="body" id="terminal">
+                <h1 class="error">听说只有帅的人，才会来到这里 😄😄 溜了溜了～～</h1>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script src="./socket.js"></script>
+    <script>
+        console.warn('token 请在 http://domain:8008/api-docs 登录接口处获取');
+        const socket = io.connect('http://localhost:8008', {
+            query: `token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlcm5hbWUiOiJsbXNhaWwxIiwiaWF0IjoxNjAzNDM4Nzc5LCJleHAiOjE2MDM1MjUxNzl9.4TODVlJTFGS_HhYHlimsxJKplB_aJNZNfvSIieGdTMc`,
+            reconnection: true
+        });
+
+        socket.on('connect', () => helper.connect(socket)); // 连接事件
+
+        socket.on('init', data => helper.init(data)); // 监听初始化事件
+
+        socket.on('join', data => helper.join(data)); // 监听 join 事件
+
+        socket.on('message', data => helper.message(data)); // 监听 message 事件
+
+        socket.on('authError', data => helper.authError(data)); // 连接错误时返回
+
+        socket.on('disconnect', err => helper.disconnect(err)); // 连接断开
+
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+            if (code == 13) helper.send();
+        }
+    </script>
+</body>
+</html>

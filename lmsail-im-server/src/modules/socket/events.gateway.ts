@@ -1,0 +1,129 @@
+import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from "socket.io";
+import * as jwt from 'jsonwebtoken';
+import { Util } from 'src/utils/util';
+import { User } from 'src/entity/user.model';
+import { jwtConstants } from 'src/config/app.pro';
+import { UserService } from '../user/user.service';
+import { EventsService } from './events.service';
+
+@WebSocketGateway()
+export class EventsGateway {
+
+    constructor(
+        private readonly userService: UserService,
+        private readonly eventService: EventsService
+    ) {}
+
+    @WebSocketServer()
+    server: Server;
+
+    onlineUser: number[] = []; // 存放所有在线的用户id
+
+    /**
+     * socket 连接时触发
+     * @param client
+     * @description handleConnection 在 WsJwtGuard 之前，所以这里要再次解析token，暂时还没想到其它好的办法
+     * @response userInfo: 用户信息 | sessionList：历史会话列表 | onlineFriend：在线的好友
+     */
+    async handleConnection(@ConnectedSocket() client: Socket): Promise<any> {
+        try {
+            const { token } = client.handshake.query;
+            const user: User = <User> jwt.verify(token, jwtConstants.secret);
+
+            // 比对用户 token 信息是否过期
+            const isOverdue = await this.eventService.chkUserToken(token, user.username);
+            if(!isOverdue) return this.server.emit('authError');
+
+            client.join(String(user.id)); client['user'] = user;
+            this.onlineUser = [...this.onlineUser, user.id];
+
+            const { data: userInfo } = await this.userService.findUserById(user.id);
+            this.server.to(String(user.id)).emit('init', Util.Success('获取成功', {
+                userInfo,
+                sessionList: await this.eventService.getSessionList(user.id),
+                mailList: await this.eventService.getUserFriendList(user.id),
+                onlineFriend: await this.eventService.getOnlineFriend(user.id, this.onlineUser)
+            })); 
+            // 用户上线了，给当前上线的在线好友广播消息，用来更新好友在线状态
+            // do something... do what ？
+        } catch (err) {
+            this.server.emit('authError');
+        } 
+    }
+
+    /**
+     * 订阅指令 join 的消息
+     * @param client
+     * @param data  { friend_id: 2 }
+     * @description 点开了好友聊天窗口时触发; join规则，按用户id从小到大连接；eg：1-2
+     */
+    @SubscribeMessage('join')
+    async handleJoinEvent(@ConnectedSocket() client: Socket, @MessageBody() data): Promise<any> {
+        const { friend_id } = data; const { id } = client['user'];
+        const isFriend = await this.eventService.isFriend(id, friend_id);
+        if(!isFriend) {
+            this.server.to(id).emit('join', Util.Error('非好友关系，请先添加好友！'));
+            return false;
+        }
+        const list = await this.eventService.handleJoinEvent(id, friend_id);
+        this.server.to(id).emit('join', { user_id: id, friend_id, list });
+    }
+
+    /**
+     * 订阅指令 leave 的消息
+     * @param client
+     * @param data  { friend_id: 2 }
+     * @description 离开了好友聊天窗口时触发
+     */
+    @SubscribeMessage('leave')
+    async handleLeaveEvent(@ConnectedSocket() client: Socket, @MessageBody() data): Promise<any> {
+        const { friend_id } = data; const { id } = client['user'];
+        const roomID = id > friend_id ? friend_id + '' + id : id + '' + friend_id;
+        client.leave(roomID);
+    }
+
+    /**
+     * 心跳包
+     */
+    @SubscribeMessage('ping')
+    async handlePingEvent(@ConnectedSocket() client: Socket): Promise<any> {
+        const { id } = client['user'];
+        this.server.to(id).emit('ping', { message: 'pong' });
+    }
+
+    /**
+     * 订阅指令 message 的消息
+     * @param client
+     * @param data { message: '', friend_id: 1 }
+     */
+    @SubscribeMessage('message')
+    async handleMessageEvent(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
+        console.log('收到客户端 message 指令消息！', client['user']);
+        const { friend_id, message } = data; const { id } = client['user'];
+        const sendUserInfo = await this.eventService.handleMessEvent(id, friend_id, message);
+        const isOnline = this.onlineUser.indexOf(data.friend_id) > -1;
+        this.server.to(friend_id).emit('message', { send_id: id, recv_id: friend_id, message, isOnline, sendUserInfo }); // 给当前聊天室推送消息
+    }
+
+    /**
+     * 客户端连接断开时触发
+     * @param data
+     * @description 客户端退出，将此用户id从在线用户中移除
+     */
+    async handleDisconnect(@ConnectedSocket() client: Socket): Promise<any> {
+        try {
+            const user: User = <User> jwt.verify(client.handshake.query.token, jwtConstants.secret);
+            const index = this.onlineUser.indexOf(user.id);
+            if(index >= 0) {
+                this.onlineUser = [
+                    ...this.onlineUser.slice(0, index), ...this.onlineUser.slice(index + 1)
+                ];
+                // 给当前退出用户的在线好友广播消息，用来更新好友在线状态
+                // do something... do what ？
+            }
+        } catch (err) {
+            console.log('token过期，无法正常解析！')
+        } 
+    }
+}

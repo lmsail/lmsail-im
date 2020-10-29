@@ -1,0 +1,124 @@
+import { Injectable } from "@nestjs/common";
+import { Util } from "src/utils/util";
+import { CacheService } from "../cache/cache.service";
+import { ContactService } from "../contact/contact.service";
+import { FriendService } from "../friend/friend.service";
+import { MessageService } from "../message/message.service";
+
+@Injectable()
+export class EventsService {
+    constructor(
+        private readonly friendService: FriendService,
+        private readonly contactService: ContactService,
+        private readonly cache: CacheService,
+        private readonly message: MessageService
+    ) {}
+
+    /**
+     * 处理收到消息事件
+     * @param id 
+     * @param friend_id 
+     * @param message 
+     */
+    async handleMessEvent(id: number, friend_id: number, message: string): Promise<any> {
+        await this.addSessionRecord(id, friend_id, message); // 添加会话记录
+        await this.addMessageRecord(id, friend_id, message); // 添加消息记录
+        await this.contactService.removeUnreadNum(id, friend_id); // 清空消息未读数
+        // 查出对发送人基础信息
+        return await this.friendService.findSendUserInfo(id, friend_id);
+    }
+
+    /**
+     * 处理 join 事件
+     * @param id 
+     * @param friend_id 
+     */
+    async handleJoinEvent(id: number, friend_id: number): Promise<any> {
+        await this.contactService.removeUnreadNum(id, friend_id); // 清空消息未读数
+        return await this.getMessageList(id, friend_id); // 获取聊天记录
+    }
+
+    /**
+     * 获取在线的好友
+     * @param uid 
+     */
+    async getOnlineFriend(uid: number, onlineUser: number[]): Promise<number[]> {
+        const response = await this.friendService.findUserFriendList(uid);
+        let friendOnline: number[] = [];
+        if(response.code === 200 && response.data.length > 0) {
+            let friendIds: number[] = [];
+            response.data.map(item => friendIds.push(item.id));
+            friendOnline = friendIds.filter(id => onlineUser.indexOf(id) > -1 && id !== uid);
+        }
+        return friendOnline;
+    }
+
+    /**
+     * 获取历史会话列表
+     * @param uid 
+     */
+    async getSessionList(uid: number): Promise<any> {
+        return await this.contactService.findSessionList(uid);
+    }
+
+    /**
+     * 获取用户通讯录列表
+     * @param uid 
+     */
+    async getUserFriendList(uid: number): Promise<any> {
+        const mailList = await this.friendService.findUserFriendList(uid);
+        if(mailList && mailList.code === 200) {
+            return mailList.data;
+        }
+        return [];
+    }
+
+    /**
+     * 检测是否为好友关系
+     * @param uid 
+     * @param to_uid 
+     */
+    async isFriend(uid: number, to_uid: number): Promise<boolean> {
+        return await this.friendService.friendRecord(to_uid, uid);
+    }
+
+    /**
+     * 添加会话记录
+     * @param uid 
+     * @param friend_id 
+     * @param message 
+     */
+    async addSessionRecord(uid: number, friend_id: number, message: string): Promise<boolean> {
+        const forward = await this.contactService.addForwardContactRecord(uid, friend_id, message);
+        const reverse = await this.contactService.addReverseContactRecord(uid, friend_id, message);
+        return forward && reverse;
+    }
+
+    /**
+     * 获取历史消息记录
+     * @param id 
+     * @param friend_id 
+     */
+    async getMessageList(id: number, friend_id: number): Promise<any> {
+        return await this.message.findMessageList(id, friend_id);
+    }
+
+    /**
+     * 添加消息发送记录
+     * @param uid 
+     * @param friend_id 
+     * @param message 
+     */
+    async addMessageRecord(uid: number, friend_id: number, message: string): Promise<boolean> {
+        return await this.message.insertMessage(uid, friend_id, message);
+    }
+
+    /**
+     * 检测用户token是否过期
+     * @param token 
+     */
+    async chkUserToken(token: string, username: string): Promise<boolean> {
+        const cacheToken = await this.cache.client.hget('tokens', Util.Md5(username));
+        return token === cacheToken;
+    }
+}

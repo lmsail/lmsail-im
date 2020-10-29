@@ -103,11 +103,12 @@ export const initChatInfo = (chatUserInfo, needSend = true) => {
 
 /**
  * 初始化消息列表
- * @param {*} param0 
+ * @param {*} data
  */
 export const initMessList = data => {
     return async dispatch => {
-        dispatch(initHistoryMsg(data))
+        await dispatch(initHistoryMsg(data))
+        PubSub.publish('messageLoadMore', data.list)
     }
 }
 
@@ -274,7 +275,7 @@ export const findMoreMessage = (friend_id, uid, page = 0) => {
         const response = (await reqHistoryMessage({friend_id, page})).data
         const { code, data } = response
         if(code === 200 && data.length > 0) {
-            dispatch(appendMesslist({friend_id, uid, data}))
+            dispatch(appendMesslist({friend_id, uid, data, page}))
         }
         PubSub.publish('messageLoadMore', data)
     }

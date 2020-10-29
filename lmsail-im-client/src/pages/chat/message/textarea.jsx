@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import PubSub from 'pubsub-js'
 import { Row, Col, Icon, Button, Input, Tooltip, message as AM } from 'antd'
 
 import { pushChatMsg, recvChatMsg, modifyContacts } from '../../../redux/actions'
@@ -91,6 +92,7 @@ class ChatTextarea extends Component {
             recv_id: chatUserInfo.friend_id,
             message
         })
+        PubSub.publish('sendMessage')
         this.sortContacts(contacts, chatUserInfo, message)
     }
 }

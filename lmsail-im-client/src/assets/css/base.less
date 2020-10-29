@@ -301,11 +301,41 @@
             overflow: auto;
             background: @basicBgColor;
             padding: 20px;
+            .separate {
+                text-align: center;
+                line-height: 30px;
+                margin: 30px auto;
+                color: #999;
+                span {
+                    position: relative;
+                }
+                span::before, span::after {
+                    position: absolute;
+                    width: 50px;
+                    height: 1px;
+                    background: #ddd;
+                    content: "";
+                    top: 7px;
+                }
+                span::before {
+                    left: -60px;
+                }
+                span::after {
+                    right: -60px;
+                }
+            }
             .message-time {
                 font-size: 10px;
                 color: #666;
                 clear: both;
-                text-align: right;
+                text-align: center;
+                height: 40px;
+                line-height: 40px;
+                span {
+                    background: #eee;
+                    padding: 5px 15px;
+                    border-radius: 30px;
+                }
             }
             .message-more {
                 text-align: center;
@@ -330,6 +360,16 @@
             .message-left, .message-right {
                 margin-bottom: 15px;
                 .message {
+                    clear: both; /* 清除左右浮动 */
+                    word-break: break-word; /* 文本行的任意字内断开 */
+                    word-wrap: break-word; /* IE */
+                    white-space: -moz-pre-wrap; /* Mozilla */
+                    white-space: -hp-pre-wrap; /* HP printers */
+                    white-space: -o-pre-wrap; /* Opera 7 */
+                    white-space: -pre-wrap; /* Opera 4-6 */
+                    white-space: pre; /* CSS2 */
+                    white-space: pre-wrap; /* CSS 2.1 */
+                    white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
                     span {
                         border: 1px solid @borderColor;
                         word-break: break-all;
@@ -338,6 +378,7 @@
                         min-width: 50px;
                         max-width: 60%;
                         color: #000;
+                        position: relative;
                     }
                     span:after {
                         content: '';
@@ -345,6 +386,12 @@
                         top: 14px;
                         height: 10px;
                         width: 10px;
+                    }
+                    sub {
+                        float: right;
+                        height: 20px;
+                        line-height: 20px;
+                        transform: scale(0.80);
                     }
                 }
             }
@@ -362,6 +409,9 @@
                         border-left: 1px solid #ebebeb;
                         transform: rotate(45deg);
                     }
+                    sub {
+                        color: #999;
+                    }
                 }
             }
             .message-right {
@@ -375,6 +425,9 @@
                         right: -4px;
                         background-color: #a2e756;
                         transform: rotate(45deg);
+                    }
+                    sub {
+                        color: #666;
                     }
                 }
                 .pull-left, .pull-right {

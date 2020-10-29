@@ -64,28 +64,47 @@ export const Request = (url, data = {}, type = 'POST') => {
  * @param {*} date 
  */
 export const friendTimeShow = date => {
-    if(!date) return '刚刚'
-    // date = new Date(new Date(new Date(date).toJSON()) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '') 
-    date = date.replace(/-/g, '/');
-    date = new Date(date).getTime() / 1000;
-
-    let time = new Date().getTime(), s;
-    time = parseInt((time - date * 1000) / 1000);
-    if (time < 60) {
-        return '刚刚';
-    } else if ((time < 60 * 60) && (time >= 60)) {
-        s = Math.floor(time / 60);
-        return s + "分钟前";
-    } else if ((time < 60 * 60 * 24) && (time >= 60 * 60)) {
-        s = Math.floor(time / 60 / 60);
-        return s + "小时前";
-    } else if ((time < 60 * 60 * 24 * 3) && (time >= 60 * 60 * 24)) {
-        s = Math.floor(time / 60 / 60 / 24);
-        return s + "天前";
+    if(!date) return currendHourMin()
+    const dateSplit = date.split(' ')
+    const hourMinSec = dateSplit[1].substr(0, 5);
+    const count = getIntervalDay(date);
+    if(count === 0) {
+        return hourMinSec; // 今天的时间
+    } else if(count === 1) {
+        return '昨天 ' + hourMinSec;
     } else {
-        date = new Date(parseInt(date) * 1000);
-        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        const monthDay = dateSplit[0].substr(5, 10);
+        return monthDay + " " + hourMinSec;
     }
+}
+
+/**
+ * 计算间隔天数
+ * @param {*} data 2020-10-29
+ */
+export const getIntervalDay = data => {
+    data = data.replace(/-/g, '')
+    const date = data.toString();
+    const year = date.substring(0, 4);
+    const month = date.substring(4, 6);
+    const day = date.substring(6, 8);
+    const d1 = new Date(year + '/' + month + '/' + day);
+
+    const dd = new Date();
+    const y = dd.getFullYear();
+    const m = dd.getMonth() + 1;
+    const d = dd.getDate();
+
+    const d2 = new Date(y + '/' + m + '/' + d);
+    return parseInt(d2 - d1) / 1000 / 60 / 60 / 24;
+}
+
+// 获取当前时分
+export const currendHourMin = () => {
+    const nowDate = new Date().getTime();
+    const offset_GMT = new Date().getTimezoneOffset();
+    const today = new Date(nowDate + offset_GMT * 60 * 1000 + 8 * 60 * 60 * 1000);
+    return twoDigits(today.getHours()) + ":" + twoDigits(today.getMinutes());
 }
 
 // 获取当前时间

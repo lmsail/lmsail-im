@@ -7,10 +7,10 @@ import { findMoreMessage } from '../../../redux/actions'
 
 class Message extends Component {
 
-    state = { loadmore: false, page: 0, showMoreText: true }
+    state = { loadmore: false, page: 0, showMoreText: false }
 
     componentDidUpdate() {
-        if(!this.state.page > 0)
+        if(this.state.page <= 0)
             this.scrollToBottom()
     }
 
@@ -19,12 +19,17 @@ class Message extends Component {
 
         // 监听加载历史消息事件
         PubSub.subscribe('messageLoadMore', (msg, data) => {
-            this.setState({ loadmore: false, showMoreText: data.length > 0 })
+            this.setState({ loadmore: false, showMoreText: data.length >= 15 })
         });
 
         // 初始化state
         PubSub.subscribe('initMessageState', (msg, data) => {
-            this.setState({ loadmore: false, page: 0, showMoreText: true })
+            this.setState({ loadmore: false, page: 0 })
+        });
+
+        // 监听发送消息
+        PubSub.subscribe('sendMessage', () => {
+            if(this.state.page > 0) this.scrollToBottom()
         });
     }
 
@@ -46,7 +51,7 @@ class Message extends Component {
         let { page } = this.state
         page++
         const { chat: { chatUserInfo: { friend_id } }, user: { userInfo: { id } } } = this.props
-        this.setState({ loadmore: true, page: page })
+        this.setState({ loadmore: true, page })
         this.props.findMoreMessage(friend_id, id, page)
     }
 
@@ -72,34 +77,37 @@ class Message extends Component {
         const key = id > friend_id ? `${friend_id}${id}` : `${id}${friend_id}`;
         if(!messList[key]) return null
         return messList[key].map((item, index) => {
+            if(item.type && item.type === 'separate') { // 分隔符
+                return <div key={index} className="separate">
+                    <span>{item.time ? `上一次聊天 ${friendTimeShow(item.time)} - 第 ${item.page} 页` : `以上是第 ${item.page} 页的记录`}</span>
+                </div>
+            }
             if (item.send_id === friend_id) {
-                return <div key={index} className="message-item message-left">
-                    <Row>
-                        <Col span={1} style={{ minWidth: "48px" }}>
-                            <Avatar shape="square" size={35} src={item.avatar || chatUserInfo.avatar}/>
-                        </Col>
-                        <Col span={20}>
-                            <div className="message">
-                                <span>
-                                    {item.message}
-                                    <div className="message-time">{ friendTimeShow(item.created_at) }</div>
-                                </span>
-                            </div>
-                        </Col>
-                    </Row>
+                return <div key={index}>
+                    <div className="message-item message-left">
+                        <Row>
+                            <Col span={1} style={{ minWidth: "48px" }}>
+                                <Avatar shape="square" size={35} src={item.avatar || chatUserInfo.avatar}/>
+                            </Col>
+                            <Col span={20}>
+                                <div className="message">
+                                    <span>{item.message} <sub>{ friendTimeShow(item.created_at) }</sub></span>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
                 </div>
             } else {
-                return <div key={index} className="message-item message-right">
-                    <div className="pull-left message">
-                        <span>
-                            {item.message}
-                            <div className="message-time">{ friendTimeShow(item.created_at) }</div>
-                        </span>
+                return <div key={index}>
+                    <div className="message-item message-right">
+                        <div className="pull-left message">
+                            <span>{item.message} <sub>{ friendTimeShow(item.created_at) }</sub></span>
+                        </div>
+                        <div className="pull-right">
+                            <Avatar shape="square" size={35} src={item.avatar || userInfo.avatar}/>
+                        </div>
+                        <div style={{clear: "both"}}/>
                     </div>
-                    <div className="pull-right">
-                        <Avatar shape="square" size={35} src={item.avatar || userInfo.avatar}/>
-                    </div>
-                    <div style={{clear: "both"}}/>
                 </div>
             }
         })

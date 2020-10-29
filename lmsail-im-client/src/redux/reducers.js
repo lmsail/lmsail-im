@@ -99,7 +99,6 @@ const chat = (state = initChatInfo, action) => {
             return {...state, ...action.data}
 
         case INIT_MESS_LIST: // 初始化消息列表
-            // return {...state, ...action.data}
             const messages = state.messList
             const { user_id, friend_id, list } = action.data
             const messKey = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`
@@ -116,8 +115,10 @@ const chat = (state = initChatInfo, action) => {
 
         case APPEND_MESSLIST: // 追加消息
             let history = state.messList
-            const { friend_id: friendId, uid, data } = action.data
+            const { friend_id: friendId, uid, data, page } = action.data
             const mkey = uid > friendId ? `${friendId}${uid}` : `${uid}${friendId}`;
+            const time = data.length > 0 ? data[0]['created_at'] : null
+            history[mkey].unshift({ type: 'separate', page, time })
             data.map(item => history[mkey].unshift(item))
             // history[mkey] = [...data, ...history]
             return {...state, messList: history}

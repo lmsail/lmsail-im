@@ -78,8 +78,8 @@ class Contacts extends Component {
         const { friend_id } = contacts[index]
         const key = id > friend_id ? `${friend_id}${id}` : `${id}${friend_id}`
         const needSend = !(messList && messList[key])
+        PubSub.publish('initMessageState', messList[key])
         this.props.initChatInfo(contacts[index], needSend)
-        PubSub.publish('initMessageState')
     }
 }
 

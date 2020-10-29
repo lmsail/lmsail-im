@@ -41,7 +41,7 @@ class LeftNav extends Component {
                 {/* github 地址 */}
                 <div className="github">
                     <Tooltip placement="top" title="下载源码">
-                        <a href="https://github.com/lmsail/react-im-server/tree/v1" target="_blank" rel="noopener noreferrer">
+                        <a href="https://github.com/lmsail/lmsail-im" target="_blank" rel="noopener noreferrer">
                             <Icon type="github" />
                         </a>
                     </Tooltip>

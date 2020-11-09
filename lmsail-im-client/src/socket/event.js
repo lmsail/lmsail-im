@@ -1,9 +1,9 @@
 /**
  * socket 事件处理
  */
-import store from '../redux/store'
-import { setSocketObject, initMain, initMessList, recvChatMsg, logout } from '../redux/actions'
 import { message as AM } from 'antd'
+import store from '../redux/store'
+import { setSocketObject, initMain, initMessList, recvChatMsg, withDrawMsgAction, logout } from '../redux/actions'
 
 // 连接成功
 export const connect = socket => {
@@ -38,6 +38,15 @@ export const join = message => {
 export const message = message => {
     // console.log('系统消息 [message]', message)
     store.dispatch(recvChatMsg(message))
+}
+
+/**
+ * 撤回消息 - 无时间限制
+ * @param {*} message { message_id, user_id, friend_id}
+ */
+export const withdraw = message => {
+    // console.log('系统消息 [withdraw]', message)
+    store.dispatch(withDrawMsgAction(message))
 }
 
 // 授权验证失败事件

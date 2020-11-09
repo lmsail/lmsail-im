@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Avatar, Row, Col, Skeleton, Icon, Dropdown, Menu } from 'antd'
 import PubSub from 'pubsub-js'
 import { friendTimeShow, handleMessage } from '../../../utils'
-import { findMoreMessage, withDrawMsgAction } from '../../../redux/actions'
+import { findMoreMessage, withDrawMsgIns } from '../../../redux/actions'
 
 class Message extends Component {
 
@@ -79,6 +79,10 @@ class Message extends Component {
             if(item.type && item.type === 'messdone') { // 加载到底分隔符
                 return <div key={index} className="separate"><span>美好的回忆总是短暂的，尽情享受当下吧～</span></div>
             }
+            if(item.status === 0) {
+                return <div key={index} className="message-time"><span>{item.message}</span></div>
+            }
+            if(!item.message) return null
             if (item.send_id === friend_id) {
                 return <div key={index}>
                     <div className="message-item message-left">
@@ -95,20 +99,10 @@ class Message extends Component {
                     </div>
                 </div>
             } else {
-                const menu = (
-                    <Menu>
-                        <Menu.Item onClick={() => this.withdraw()}><Icon type="delete" /> 撤回</Menu.Item>
-                    </Menu>
-                );
                 return <div key={index}>
                     <div className="message-item message-right">
                         <div className="pull-left message">
-                            <Dropdown trigger={['contextMenu']} overlay={menu} onVisibleChange={() => this.setMessageId(item.id)}>
-                                <span>
-                                    <i dangerouslySetInnerHTML={handleMessage(item.message)} /> <sub>{ friendTimeShow(item.created_at) }</sub>
-                                    {/* <Icon type="down" className="option" /> 鼠标移动会出现一个小图标，原本是用来显示更多操作的 */}
-                                </span>
-                            </Dropdown>
+                            {this.createRightMessDom(item)}
                         </div>
                         <div className="pull-right">
                             <Avatar shape="square" size={35} src={item.avatar || userInfo.avatar}/>
@@ -118,6 +112,20 @@ class Message extends Component {
                 </div>
             }
         })
+    }
+
+    // 生成右键撤回消息节点
+    createRightMessDom = item => {
+        const menu = (
+            <Menu>
+                <Menu.Item onClick={() => this.withdraw()}><Icon type="delete" /> 撤回</Menu.Item>
+            </Menu>
+        );
+        return (
+            <Dropdown trigger={['contextMenu']} overlay={menu} onVisibleChange={() => this.setMessageId(item.id)}>
+                <span><i dangerouslySetInnerHTML={handleMessage(item.message)} /> <sub>{ friendTimeShow(item.created_at) }</sub></span>
+            </Dropdown>
+        )
     }
 
     // 设置当前选中的消息id
@@ -130,12 +138,12 @@ class Message extends Component {
     // 消息撤回
     withdraw = () => {
         const { message_id } = this.state
-        const { chat: { chatUserInfo: { friend_id } }, user: { userInfo: { id } } } = this.props
-        this.props.withDrawMsgAction({ message_id, friend_id, user_id: id})
+        const { chat: { chatUserInfo: { friend_id } }, user: { userInfo: { id, nickname } } } = this.props
+        this.props.withDrawMsgIns({ message_id, friend_id, user_id: id, nickname})
     }
 }
 
 export default connect(
     state => ({chat: state.chat, user: state.user}), 
-    { findMoreMessage, withDrawMsgAction }
+    { findMoreMessage, withDrawMsgIns }
 )(Message)

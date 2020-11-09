@@ -52,4 +52,31 @@ export class MessageService {
         });
         return list.reverse();
     }
+
+    /**
+     * 是否为本人发送的消息
+     * @param message_id 
+     */
+    async isMySelfMessage(message_id: number, user_id: number): Promise<Boolean> {
+        const result = await this.messageModel.findOne({
+            where: { send_id: user_id, id: message_id }
+        });
+        return Boolean(result);
+    }
+
+    /**
+     * 消息撤回
+     * @param data { user_id, friend_id, message_id } 
+     */
+    async withDrawMessage(data: any, message: string): Promise<any> {
+        const { user_id, friend_id, message_id } = data
+        const delStatus = await this.messageModel.delete({id: message_id});
+        if(delStatus) {
+            const result = await this.messageModel.save({
+                send_id: user_id, recv_id: friend_id, message, status: 0, created_at: Util.CurrentTime()
+            });
+            return Util._Rs(Boolean(result), '撤回成功!!', '撤回失败!!');
+        }
+        return Util.Error('消息撤回失败');
+    }
 }

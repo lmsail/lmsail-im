@@ -20,6 +20,8 @@ export const MessServerConnect = () => {
     socket.on('join', message => Event.join(message)); // 监听 join 事件
     
     socket.on('message', message => Event.message(message)); // 监听 message 事件
+
+    socket.on('withdraw', message => Event.withdraw(message)); // 监听消息撤回事件
     
     socket.on('authError', () => Event.authError()); // 连接错误时返回
     

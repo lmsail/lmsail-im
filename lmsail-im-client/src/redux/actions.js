@@ -13,7 +13,7 @@ import {
     reqUserSearch, reqFriendAdd, reqRegister, reqUpdatePassword, reqHistoryMessage 
 } from '../api'
 import store from './store'
-import { pySegSort, setItem, removeItem } from '../utils'
+import { pySegSort, setItem, removeItem, currentTime } from '../utils'
 
 let socket = null
 
@@ -290,10 +290,32 @@ export const findMoreMessage = (friend_id, user_id, page = 0) => {
     }
 }
 
-// 消息撤回 - 还未与服务端同步
+// 发送消息撤回指令 data: {user_id, friend_id, message_id}
+export const withDrawMsgIns = data => {
+    return async dispatch => {
+        const { user_id, friend_id } = data
+        socket.emit('withdraw', data)
+        await dispatch(withDrawMessage(data))
+        await dispatch(receiveChatMsg({
+            send_id: friend_id, recv_id: user_id, sendUserInfo: {
+                user_id, friend_id,
+                last_mess: '[消息撤回]', unread_num: 0, created_at: currentTime()
+            }
+        }))
+    }
+}
+
+// 消息撤回动作 data: {user_id, friend_id, message_id}
 export const withDrawMsgAction = data => {
     return async dispatch => {
-        await dispatch(withDrawMessage(data))
+        const { user_id, friend_id } = data
+        dispatch(withDrawMessage(data))
+        await dispatch(receiveChatMsg({
+            send_id: user_id, recv_id: friend_id, sendUserInfo: {
+                user_id, friend_id,
+                last_mess: '[消息撤回]', created_at: currentTime()
+            }
+        }))
     }
 }
 

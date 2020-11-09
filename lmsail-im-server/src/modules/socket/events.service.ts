@@ -39,6 +39,24 @@ export class EventsService {
     }
 
     /**
+     * 处理 withdraw 消息撤回事件
+     * @param data { message_id, user_id, friend_id }
+     */
+    async handleWithDrawEvent(data: any, username: string): Promise<any> {
+        const { message_id, user_id, friend_id } = data
+        const isMinMsg = await this.message.isMySelfMessage(message_id, user_id);
+        if(isMinMsg) {
+            const message = `${username}撤回了一条消息`;
+            const response = await this.message.withDrawMessage(data, message);
+            if(response.code === 200) {
+                return await this.addSessionRecord(user_id, friend_id, '[消息撤回]');
+            }
+            return Util.Error(response.message);
+        }
+        return Util.Error('非本人发送的消息，不可撤回');
+    }
+
+    /**
      * 获取在线的好友
      * @param uid 
      */

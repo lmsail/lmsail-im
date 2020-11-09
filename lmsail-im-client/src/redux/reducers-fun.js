@@ -50,18 +50,22 @@ export const handleMessSendRecv = (state, data) => {
     const { messList } = state
     const { send_id, recv_id } = data
     const key = send_id > recv_id ? `${recv_id}${send_id}` : `${send_id}${recv_id}`;
-    messList[key] = messList[key] ? [...messList[key], data] : [data];
+    if(messList[key]) {
+        messList[key] = [...messList[key], data];
+    }
     return { ...state, messList }
 }
 
 // 消息撤回
 export const withDrawMessageFun = (state, data) => {
     const { messList } = state
-    const { user_id, friend_id, message_id } = data
+    const { user_id, friend_id, message_id, nickname } = data
     const key = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`;
     if(messList[key]) {
         const index = messList[key].findIndex(item => item.id === message_id)
-        messList[key][index]['message'] = '<s style="color: #888;">[消息已撤回]</s>'
+        messList[key][index]['message'] = `${nickname}撤回了一条消息`
+        messList[key][index]['status'] = 0
+        messList[key].push(messList[key].splice(index, 1)[0])
     }
     return { ...state, messList }
 }

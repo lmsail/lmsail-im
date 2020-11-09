@@ -24,7 +24,7 @@ export class AuthService {
         const { username, password } = user;
         const userInfo = await this.userModel.findOne({ username, password: Util.Md5(password) });
         if(userInfo) {
-            const token = this.jwtService.sign({ id: userInfo.id, username });
+            const token = this.jwtService.sign({ id: userInfo.id, username, nickname: userInfo.nickname });
             this.delCacheOldToken(username, token);
             return Util.Success('登录成功', { token });
         }

@@ -84,15 +84,6 @@ export class EventsGateway {
     }
 
     /**
-     * 心跳包
-     */
-    @SubscribeMessage('ping')
-    async handlePingEvent(@ConnectedSocket() client: Socket): Promise<any> {
-        const { id } = client['user'];
-        this.server.to(id).emit('ping', { message: 'pong' });
-    }
-
-    /**
      * 订阅指令 message 的消息
      * @param client
      * @param data { message: '', friend_id: 1 }
@@ -104,6 +95,29 @@ export class EventsGateway {
         const sendUserInfo = await this.eventService.handleMessEvent(id, friend_id, message);
         const isOnline = this.onlineUser.indexOf(data.friend_id) > -1;
         this.server.to(friend_id).emit('message', { send_id: id, recv_id: friend_id, message, isOnline, sendUserInfo }); // 给当前聊天室推送消息
+    }
+
+    /**
+     * 订阅指令 withdraw(消息撤回) 的消息
+     * @param client
+     * @param data { message_id, user_id, friend_id }
+     */
+    @SubscribeMessage('withdraw')
+    async handleWithDraw(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
+        const { friend_id } = data;
+        const result = await this.eventService.handleWithDrawEvent(data, client['user']['nickname']);
+        if(result) {
+            this.server.to(friend_id).emit('withdraw', data); // 给当前聊天室推送消息
+        }
+    }
+
+    /**
+     * 心跳包
+     */
+    @SubscribeMessage('ping')
+    async handlePingEvent(@ConnectedSocket() client: Socket): Promise<any> {
+        const { id } = client['user'];
+        this.server.to(id).emit('ping', { message: 'pong' });
     }
 
     /**

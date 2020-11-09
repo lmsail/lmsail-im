@@ -20,6 +20,10 @@ export class Message {
     @Column({ comment: '消息内容' })
     message: string;
 
+    @ApiProperty()
+    @Column({ comment: '是否被撤回', default: 1 })
+    status: number;
+
     @ApiProperty({ description: '创建时间' })
     @Column({ default: Util.CurrentTime() })
     created_at: string;

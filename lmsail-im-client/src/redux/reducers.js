@@ -73,7 +73,7 @@ const user = (state = initUser, action) => {
             } else { // 改变位置
                 contact[index]['last_mess'] = sendUserInfo.last_mess
                 contact[index]['created_at'] = sendUserInfo.created_at
-                contact[index]['unread_num'] = sendUserInfo.unread_num
+                contact[index]['unread_num'] = sendUserInfo.unread_num ?? contact[index]['unread_num']+1
                 contact.unshift(contact.splice(index, 1)[0])
             }
             return { ...state, contacts: contact }

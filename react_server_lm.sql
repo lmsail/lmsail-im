@@ -70,14 +70,16 @@ INSERT INTO `im_friends` (`id`, `user_id`, `friend_id`, `target_id`, `status`, `
 
 DROP TABLE IF EXISTS `im_message`;
 CREATE TABLE `im_message` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `send_id` int(11) NOT NULL COMMENT '发送方id',
   `recv_id` int(11) NOT NULL COMMENT '接收方id',
   `message` varchar(255) NOT NULL COMMENT '消息内容',
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否撤回',
   `created_at` varchar(255) NOT NULL DEFAULT '2020-10-30 17:49:10',
   PRIMARY KEY (`id`),
   KEY `send_id` (`send_id`),
   KEY `recv_id` (`recv_id`),
+  KEY `status` (`status`),
   KEY `created_at` (`created_at`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

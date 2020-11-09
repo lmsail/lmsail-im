@@ -98,6 +98,7 @@ class Profile extends Component {
             <Form>
                 <Form.Item>
                     <Input
+                        key={info.nickname} 
                         prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
                         placeholder='请输入备注' onChange={e => this.setNickRemark(e)}
                         defaultValue={info.nick_remark}

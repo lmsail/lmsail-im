@@ -72,6 +72,8 @@ export const friendTimeShow = date => {
         return hourMinSec; // 今天的时间
     } else if(count === 1) {
         return '昨天 ' + hourMinSec;
+    } else if(count > 1 && count < 5) {
+        return count + '天前';
     } else {
         const monthDay = dateSplit[0].substr(5, 10);
         return monthDay + " " + hourMinSec;
@@ -123,4 +125,15 @@ export const currentTime = () => {
 const twoDigits = number => {
     if (number < 10) return '0' + number;
     return number;
+}
+
+/**
+ * 处理消息，自动转换消息中的链接
+ * 只是别 http | https | tcp 打头的链接 
+ * eg: http://www.lmsail.com | https://www.baidu.com | tcp://192.168.0.101:8008 | http://192.168.0.101:8008 
+ */
+export const handleMessage = message => {
+    const reg = /(http:\/\/|https:\/\/|tcp:\/\/)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/g;
+    message = message.replace(reg, ' <a target="_blank" href="$1$2">$1$2</a> ')
+    return {__html: message}
 }

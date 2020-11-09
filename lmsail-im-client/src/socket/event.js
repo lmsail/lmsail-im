@@ -1,19 +1,5 @@
 /**
  * socket 事件处理
- * -----------------------------------------------
- * 外部组件使用 redux 时，选择哪种方式？
- * 
- * import { setGlobalSocket } from '../redux/init'
- * 
- * 1、所有方法写到 redux 相关文件中
- *  eg：store.dispatch(setGlobalSocket(socket))
- * 
- * 2、直接使用 state 对象更改 redux 中的值
- *  const statr = store.getState();
- *  eg：state.globalData.socket = socket;
- * 
- * 第一种方式会触发页面重新渲染，第二种不会
- * -----------------------------------------------
  */
 import store from '../redux/store'
 import { setSocketObject, initMain, initMessList, recvChatMsg, logout } from '../redux/actions'

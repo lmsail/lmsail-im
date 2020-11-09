@@ -2,10 +2,11 @@ import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { Layout } from 'antd'
-import LeftNav from '../components/left-nav'
 import Routers from '../router'
 import { getItem } from '../utils'
 import { MessServerConnect } from '../socket'
+import LeftNav from '../components/left-nav'
+import MessageSound from '../components/sound/message'
 
 class App extends Component {
 
@@ -30,6 +31,7 @@ class App extends Component {
         return (
             <Layout className={['container', this.state.screenType === 'fullscreen-exit' ? 'mini-pattern' : null].join(' ')}>
                 <LeftNav parent={this} />
+                <MessageSound /> {/* 新消息提醒音效 */}
                 <Switch>
                     {Routers.map(item => <Route exact path={item.path} component={item.components} key={item.path}/>)}
                     <Redirect to='/' />

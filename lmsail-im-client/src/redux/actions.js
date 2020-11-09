@@ -6,7 +6,7 @@ import PubSub from 'pubsub-js'
 import {
     initChatData, receiveChatMsg, sendChatMsg, showRightType, showFriendInfo, authSuccess, userLoginInfo,
     logOut, modifyUserContacts, getNewFriends, getMailList, setGlobalSocket, searchUserList, setRdirectPath, setResponseMsg, 
-    initHistoryMsg, updateUnReadNum, appendMesslist
+    initHistoryMsg, updateUnReadNum, appendMesslist, hiddenMoreText, withDrawMessage
 } from './init'
 import { 
     reqFriendVerify, reqFriendHandle, reqLogin, reqLogout, reqFriendList, reqFriendRemark, reqUpdateUinfo, reqUserInfo, 
@@ -61,9 +61,9 @@ export const logout = () => {
 export const initMain = data => {
     const { userInfo, sessionList, mailList } = data
     return async dispatch => {
-        dispatch(userLoginInfo({userInfo, contacts: sessionList}))
-        dispatch(getMailList(pySegSort(mailList)))
-        dispatch(initUnreadNum())
+        await dispatch(userLoginInfo({userInfo, contacts: sessionList}))
+        await dispatch(getMailList(pySegSort(mailList)))
+        await dispatch(initUnreadNum())
     }
 }
 
@@ -84,31 +84,34 @@ export const initUnreadNum = () => {
 // 修改消息会话列表
 export const modifyContacts = contacts => {
     return dispatch => {
-        dispatch(modifyUserContacts({contacts}))
+        dispatch(modifyUserContacts({ contacts }))
     }
 }
 
 /**
  * 初始化socket连接
+ * @description 每次点开聊天窗口都会触发
  * @param {*} chatUserInfo 
  */
 export const initChatInfo = (chatUserInfo, needSend = true) => {
     return async dispatch => {
         const { friend_id } = chatUserInfo
         if(needSend) socket.emit('join', { friend_id });
-        await dispatch(initChatData({chatUserInfo, loading: false, showRightType: 'message'}))
-        dispatch(initUnreadNum())
+        await dispatch(initChatData({chatUserInfo, showRightType: 'message'}))
+        await dispatch(initUnreadNum())
+        PubSub.publish('messFirstLoadDone')
     }
 }
 
 /**
  * 初始化消息列表
+ * @description 这里是首次加载聊天时触发
  * @param {*} data
  */
 export const initMessList = data => {
     return async dispatch => {
         await dispatch(initHistoryMsg(data))
-        PubSub.publish('messageLoadMore', data.list)
+        PubSub.publish('messFirstLoadDone')
     }
 }
 
@@ -134,6 +137,7 @@ export const recvChatMsg = chat => {
     return async dispatch => {
         await dispatch(receiveChatMsg(chat))
         dispatch(initUnreadNum())
+        PubSub.publish('playMessageSound') // 发送消息提醒事件
     }
 }
 
@@ -250,7 +254,7 @@ export const syncUserAvatar = avatar => {
 }
 
 // 模糊搜索用户
-export const findUserList = keyword => {
+export const findUserList = (keyword, callback) => {
     return async dispatch => {
         const response = (await reqUserSearch(keyword)).data
         if(response.code === 200) {
@@ -258,6 +262,7 @@ export const findUserList = keyword => {
         } else {
             AM.error(response.message)
         }
+        callback()
     }
 }
 
@@ -265,19 +270,30 @@ export const findUserList = keyword => {
 export const addFriend = (friend_id, remark) => {
     return async dispatch => {
         const response = (await reqFriendAdd({ friend_id, remark })).data
-        AM.error(response.message)
+        AM.success(response.message)
     }
 }
 
 // 加载更多消息
-export const findMoreMessage = (friend_id, uid, page = 0) => {
+export const findMoreMessage = (friend_id, user_id, page = 0) => {
     return async dispatch => {
         const response = (await reqHistoryMessage({friend_id, page})).data
         const { code, data } = response
         if(code === 200 && data.length > 0) {
-            dispatch(appendMesslist({friend_id, uid, data, page}))
+            await dispatch(appendMesslist({friend_id, user_id, list: data, page}))
+            if(data.length < 15) await dispatch(hiddenMoreText({friend_id, user_id, data, page}))
+        } else {
+            // 消息加载结束，将当前用户窗口的 showMoreText 设置为 false
+            await dispatch(hiddenMoreText({friend_id, user_id, data, page}))
         }
-        PubSub.publish('messageLoadMore', data)
+        PubSub.publish('messLoadDone')
+    }
+}
+
+// 消息撤回 - 还未与服务端同步
+export const withDrawMsgAction = data => {
+    return async dispatch => {
+        await dispatch(withDrawMessage(data))
     }
 }
 

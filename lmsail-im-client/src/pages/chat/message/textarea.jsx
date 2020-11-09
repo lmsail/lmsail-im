@@ -92,7 +92,7 @@ class ChatTextarea extends Component {
             recv_id: chatUserInfo.friend_id,
             message
         })
-        PubSub.publish('sendMessage')
+        PubSub.publish('messListAppend')
         this.sortContacts(contacts, chatUserInfo, message)
     }
 }

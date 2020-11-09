@@ -8,6 +8,8 @@ import ReactLogo from '../../assets/images/about/react.png'
 
 class Login extends Component {
 
+    state = { loginLoading: false }
+
     componentDidMount() {
         this.props.form.validateFields();
     }
@@ -17,6 +19,7 @@ class Login extends Component {
     }
 
     render() {
+        const { loginLoading } = this.state
         const { form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched }, user: { redirectTo, msg } } = this.props
         if (redirectTo && !msg) {
             if (redirectTo === '/login') window.location.reload()
@@ -53,7 +56,7 @@ class Login extends Component {
                     </Form.Item>
                     <Form.Item style={{ marginBottom: 5 }}><Checkbox defaultChecked>记住我</Checkbox></Form.Item>
                     <Form.Item>
-                        <Button type="primary" size="large" htmlType="submit" block disabled={this.hasErrors(getFieldsError())}>登录</Button>
+                        <Button type="primary" size="large" htmlType="submit" loading={loginLoading} block disabled={this.hasErrors(getFieldsError())}>登录</Button>
                         <Button type="default" size="large" block onClick={this.register} style={{ marginTop: 15 }}>没有账号？注册</Button>
                     </Form.Item>
                 </Form>
@@ -65,6 +68,8 @@ class Login extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                this.setState({ loginLoading: true })
+                // setTimeout(() => this.setState({loginLoading: false}), 200)
                 this.props.login(values.username, values.password)
             }
         })

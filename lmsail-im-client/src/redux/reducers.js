@@ -4,9 +4,10 @@ import {
     CHANGE_RIGHT_TYPE, INIT_FRIEND_INFO, AUTH_SUCCESS, ERR_MSG,
     USERINFO, LOGOUT, MODIFY_USER_CONTACTS, GET_NEW_FRIENDS, GET_USER_MAILLIST,
     SET_GLOBAL_SOCKET, USERSEARCH_LIST, SET_REDIRECT_PATH, SET_RESPONSE_MSG, UPDATE_UNREADNUM,
-    APPEND_MESSLIST
+    APPEND_MESSLIST, HIDDEN_MORETEXT, WITHDRAW_MESSAGE
 } from './action-type'
 import { initUser, initChatInfo, friendInfo, initGlobalData, responseMsg } from './init'
+import { handleMessAppend, handleMessSendRecv, initMessList, hideShowMoreText, handleChatInfoLoading, withDrawMessageFun } from './reducers-fun'
 
 // 全局对象
 const globalData = (state = initGlobalData, action) => {
@@ -97,34 +98,26 @@ const friend = (state = friendInfo, action) => {
 
 // 当前查看的消息列表
 const chat = (state = initChatInfo, action) => {
+    
     switch (action.type) {
         case INIT_CHAT_INFO:
-            return {...state, ...action.data}
+            return handleChatInfoLoading(state, action.data)
 
         case INIT_MESS_LIST: // 初始化消息列表
-            const messages = state.messList
-            const { user_id, friend_id, list } = action.data
-            const messKey = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`
-            messages[messKey] = list
-            return { ...state, messList: messages  }
+            return initMessList(state, action.data)
 
         case SEND_CHAT_MSG:    /* 发送消息 */
         case RECEIVE_CHAT_MSG: /* 接收消息 */
-            const messList = state.messList
-            const { send_id, recv_id } = action.data
-            const key = send_id > recv_id ? `${recv_id}${send_id}` : `${send_id}${recv_id}`;
-            messList[key] = messList[key] ? [...messList[key], action.data] : [action.data];
-            return { ...state, messList }
+            return handleMessSendRecv(state, action.data)
 
-        case APPEND_MESSLIST: // 追加消息
-            let history = state.messList
-            const { friend_id: friendId, uid, data, page } = action.data
-            const mkey = uid > friendId ? `${friendId}${uid}` : `${uid}${friendId}`;
-            const time = data.length > 0 ? data[0]['created_at'] : null
-            history[mkey].unshift({ type: 'separate', page, time })
-            data.map(item => history[mkey].unshift(item))
-            // history[mkey] = [...data, ...history]
-            return {...state, messList: history}
+        case APPEND_MESSLIST: // 追加消息并更新当前窗口的状态
+            return handleMessAppend(state, action.data)
+
+        case HIDDEN_MORETEXT: // 隐藏窗口中加载更多文字
+            return hideShowMoreText(state, action.data)
+
+        case WITHDRAW_MESSAGE: // 消息撤回
+            return withDrawMessageFun(state, action.data)
 
         case CHANGE_RIGHT_TYPE:
             return {...state, ...action.data}

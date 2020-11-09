@@ -379,6 +379,16 @@
                         max-width: 60%;
                         color: #000;
                         position: relative;
+                        .option {
+                            cursor: pointer;
+                            background: #ddd;
+                            color: #eee;
+                            padding: 2px;
+                            border-radius: 100%;
+                            position: absolute;
+                            top: calc(50% - 10px);
+                            display: none;
+                        }
                     }
                     span:after {
                         content: '';
@@ -391,7 +401,11 @@
                         float: right;
                         height: 20px;
                         line-height: 20px;
+                        margin-left: 5px;
                         transform: scale(0.80);
+                    }
+                    i {
+                        font-style: normal;
                     }
                 }
             }
@@ -420,6 +434,9 @@
                         float: right;
                         text-align: left;
                         background-color: #a2e756;
+                        .option {
+                            left: -30px;
+                        }
                     }
                     span:after {
                         right: -4px;
@@ -441,6 +458,13 @@
                     width: 44px;
                     float: right;
                     text-align: right;
+                }
+            }
+            .message-right:hover, .message-left:hover {
+                span {
+                    .option {
+                        display: block;
+                    }
                 }
             }
         }

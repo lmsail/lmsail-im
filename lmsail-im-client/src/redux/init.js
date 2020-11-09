@@ -2,7 +2,7 @@ import {
     CHANGE_RIGHT_TYPE, INIT_CHAT_INFO, INIT_FRIEND_INFO, RECEIVE_CHAT_MSG, SEND_CHAT_MSG,
     AUTH_SUCCESS, ERR_MSG, USERINFO, LOGOUT, MODIFY_USER_CONTACTS, GET_NEW_FRIENDS,
     GET_USER_MAILLIST, SET_GLOBAL_SOCKET, USERSEARCH_LIST, SET_REDIRECT_PATH, SET_RESPONSE_MSG,
-    INIT_MESS_LIST, UPDATE_UNREADNUM, APPEND_MESSLIST
+    INIT_MESS_LIST, UPDATE_UNREADNUM, APPEND_MESSLIST, HIDDEN_MORETEXT, WITHDRAW_MESSAGE
 } from "./action-type";
 
 // 全局对象
@@ -30,7 +30,8 @@ export const initUser = {
 // 存储聊天信息等
 export const initChatInfo = {
     loading: true,
-    messList: {}, // 存放用户聊天记录
+    messList: {},   // 存放用户聊天记录
+    messStatus: {}, // 存放聊天界面的状态（page，showMoreText）
     chatUserInfo: {},
     showRightType: 'welcome', /* 右侧显示内容 */
 }
@@ -51,6 +52,8 @@ export const showRightType = chat => ({type: CHANGE_RIGHT_TYPE, data: chat})
 export const initHistoryMsg = chat => ({type: INIT_MESS_LIST, data: chat})
 export const showFriendInfo = friend => ({type: INIT_FRIEND_INFO, data: friend})
 export const appendMesslist = data => ({ type: APPEND_MESSLIST, data })
+export const hiddenMoreText = data => ({ type: HIDDEN_MORETEXT, data })
+export const withDrawMessage = data => ({type: WITHDRAW_MESSAGE, data})
 
 // 用户相关
 export const authSuccess = user => ({type: AUTH_SUCCESS, data: user})

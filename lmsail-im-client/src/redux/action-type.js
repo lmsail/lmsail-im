@@ -22,3 +22,6 @@ export const SET_REDIRECT_PATH    = 'set_redirect_path'  // 设置重定向地�
 export const SET_RESPONSE_MSG     = 'set_response_msg'   // 设置响应结果
 export const UPDATE_UNREADNUM     = 'update_unreadnum'   // 消息未读数
 export const APPEND_MESSLIST      = 'append_messlist'    // 追加消息
+export const WITHDRAW_MESSAGE     = 'withdraw_message'   // 消息撤回
+
+export const HIDDEN_MORETEXT      = 'hidden_moretext'    // 隐藏聊天窗口中加载更多文字

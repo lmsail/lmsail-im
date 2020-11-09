@@ -48,7 +48,6 @@ class NewFriend extends Component {
     }
 
     handleVerify = (user_id, option) => {
-        console.log(user_id, option)
         this.props.handleFriendVerify(user_id, option)
     }
 }

@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Input, List, Avatar, Divider, Button, Modal, Form, Icon } from 'antd'
+import { Input, List, Avatar, Divider, Button, Modal, Form, Icon, message as AM } from 'antd'
 import { findUserList, addFriend } from '../../..//redux/actions'
 
 class NewFriend extends Component {
 
-    state = { friend_id: 0, remark: null, visible: false }
+    state = { friend_id: 0, remark: null, visible: false, loading: false }
 
     render() {
         const { searchList } = this.props.user
@@ -14,7 +14,7 @@ class NewFriend extends Component {
             <div className="m-user-info">
                 <h2 className="main-title">添加好友</h2>
                 <div className="friend-list">
-                    <Input.Search placeholder="用户昵称" enterButton="查找" size="large" onSearch={value => this.searchAction(value)} />
+                    <Input.Search placeholder="用户昵称" loading={this.state.loading} enterButton="查找" size="large" onSearch={value => this.searchAction(value)} />
                     <Divider orientation="left">本次搜索结果</Divider>
                     <List className="add-friend" itemLayout="horizontal" dataSource={searchList} split={false}
                         renderItem={item => (
@@ -51,7 +51,9 @@ class NewFriend extends Component {
     }
 
     searchAction = keyword => {
-        this.props.findUserList(keyword)
+        if(!keyword) return AM.error('请输入用户昵称搜索')
+        this.setState({ loading: true })
+        this.props.findUserList(keyword, () => this.setState({ loading: false }))
     }
 
     changeModalStatus = visible => {

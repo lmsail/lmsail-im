@@ -43,6 +43,7 @@
 
 ```
 git clone https://github.com/lmsail/lmsail-im
+导入根目录中 `react_server-im.sql` 数据库
 cd lmsail-server
 yarn install or npm i
 # 修改 `src/config/app.pro.ts` 中 env 配置项的 `appUrl`、`serverPort` 与 dbConfig 数据库配置项，参考 `app.dev.ts`

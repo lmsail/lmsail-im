@@ -21,7 +21,7 @@ export class ContactService {
             FROM im_contacts c 
             LEFT JOIN im_users u ON c.friend_id = u.id 
             LEFT JOIN im_friends f ON f.user_id = c.user_id AND f.friend_id = c.friend_id 
-            WHERE c.user_id = ${uid}
+            WHERE c.user_id = ${uid} ORDER BY c.created_at DESC
         `);
     }
 

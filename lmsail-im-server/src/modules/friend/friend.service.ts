@@ -87,13 +87,13 @@ export class FriendService {
      * @param body
      * @param uid
      */
-    async addFriendApply(body: AddFriendDto, uid: number): Promise<any> {
+    async addFriendApply(body: AddFriendDto, user_id: number): Promise<any> {
         const { friend_id, remark } = body;
-        if(!friend_id || !uid) return Util.Error('好友请求添加失败！');
-        if(friend_id === uid) return Util.Error('不能添加自己为好友！');
-        const info = await this.friendModel.findOne({ user_id: uid, friend_id });
+        if(!friend_id || !user_id) return Util.Error('好友请求添加失败！');
+        if(friend_id === user_id) return Util.Error('不能添加自己为好友！');
+        const info = await this.friendModel.findOne({ user_id, friend_id });
         if(!info) {
-            const result = await this.insertFriendApply(uid, friend_id, remark);
+            const result = await this.insertFriendApply(user_id, friend_id, remark);
             return Util._Rs(Boolean(result), '好友请求发送成功！', '已经是好友或已发送好友申请！');
         }
         return await this.handleAddRequest(info);

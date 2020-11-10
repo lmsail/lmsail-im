@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Input, List, Avatar, Divider, Button, Modal, Form, Icon, message as AM } from 'antd'
+import { Input, List, Avatar, Divider, Button, Modal, Form, Icon, message as AM, Alert } from 'antd'
 import { findUserList, addFriend } from '../../..//redux/actions'
 
 class NewFriend extends Component {
@@ -14,6 +14,7 @@ class NewFriend extends Component {
             <div className="m-user-info">
                 <h2 className="main-title">添加好友</h2>
                 <div className="friend-list">
+                <Alert message="搜索结果会自动过滤已是好友的用户" style={{marginBottom: 10}} banner type="info" showIcon />
                     <Input.Search placeholder="用户昵称" loading={this.state.loading} enterButton="查找" size="large" onSearch={value => this.searchAction(value)} />
                     <Divider orientation="left">本次搜索结果</Divider>
                     <List className="add-friend" itemLayout="horizontal" dataSource={searchList} split={false}
@@ -71,6 +72,7 @@ class NewFriend extends Component {
         this.setState({ remark })
     }
 
+    // 添加好友
     addFriendAction = () => {
         const { friend_id, remark } = this.state
         this.props.addFriend(friend_id, remark)

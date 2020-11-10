@@ -25,3 +25,6 @@ export const APPEND_MESSLIST      = 'append_messlist'    // 追加消息
 export const WITHDRAW_MESSAGE     = 'withdraw_message'   // 消息撤回
 
 export const HIDDEN_MORETEXT      = 'hidden_moretext'    // 隐藏聊天窗口中加载更多文字
+
+export const SETNEWFRIEND_NUM     = 'setnewfriend_num'   // 新的好友申请数量自增1/自减1
+export const USERSESSION_LIST     = 'usersession_list'   // 用户会话列表

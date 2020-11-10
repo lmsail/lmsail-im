@@ -1,18 +1,12 @@
 import { combineReducers } from 'redux'
-import {
-    INIT_CHAT_INFO, INIT_MESS_LIST, RECEIVE_CHAT_MSG, SEND_CHAT_MSG,
-    CHANGE_RIGHT_TYPE, INIT_FRIEND_INFO, AUTH_SUCCESS, ERR_MSG,
-    USERINFO, LOGOUT, MODIFY_USER_CONTACTS, GET_NEW_FRIENDS, GET_USER_MAILLIST,
-    SET_GLOBAL_SOCKET, USERSEARCH_LIST, SET_REDIRECT_PATH, SET_RESPONSE_MSG, UPDATE_UNREADNUM,
-    APPEND_MESSLIST, HIDDEN_MORETEXT, WITHDRAW_MESSAGE
-} from './action-type'
+import * as types from './action-type'
+import * as funs from './reducers-fun'
 import { initUser, initChatInfo, friendInfo, initGlobalData, responseMsg } from './init'
-import { handleMessAppend, handleMessSendRecv, initMessList, hideShowMoreText, handleChatInfoLoading, withDrawMessageFun } from './reducers-fun'
 
 // 全局对象
 const globalData = (state = initGlobalData, action) => {
     switch (action.type) {
-        case SET_GLOBAL_SOCKET: // 设置全局socket对象
+        case types.SET_GLOBAL_SOCKET: // 设置全局socket对象
             return { socket: action.data } 
         default:
             return state
@@ -29,7 +23,7 @@ const globalData = (state = initGlobalData, action) => {
  */
 const globalResponse = (state = responseMsg, action) => {
     switch (action.type) {
-        case SET_RESPONSE_MSG:
+        case types.SET_RESPONSE_MSG:
             const { type, page, message } = action.data
             return { ...state, type, page, message } 
         default:
@@ -40,27 +34,30 @@ const globalResponse = (state = responseMsg, action) => {
 // 当前登录的用户信息
 const user = (state = initUser, action) => {
     switch (action.type) {
-        case AUTH_SUCCESS:
+        case types.AUTH_SUCCESS:
             return {...action.data, ...state, msg: null, redirectTo: '/'}
-        case USERINFO:
+        case types.USERINFO:
             const { userInfo, contacts } = action.data
             return contacts ? {...state, userInfo, contacts} : {...state, userInfo}
-        case LOGOUT:
+        case types.USERSESSION_LIST: // 会话列表
+            const { sessionList } = action.data
+            return {...state, contacts: sessionList}
+        case types.LOGOUT:
             return {...action.data, redirectTo: '/login'}
-        case ERR_MSG:
+        case types.ERR_MSG:
             return {...state, msg: action.data, redirectTo: '/login'}
-        case SET_REDIRECT_PATH:
+        case types.SET_REDIRECT_PATH:
             return { redirectTo: `${action.data}` }
-        case USERSEARCH_LIST:
+        case types.USERSEARCH_LIST:
             return {...state, searchList: action.data}
-        case MODIFY_USER_CONTACTS:
+        case types.MODIFY_USER_CONTACTS:
             return {...state, contacts: action.data.contacts}
 
-        case UPDATE_UNREADNUM: // 消息未读数
+        case types.UPDATE_UNREADNUM: // 消息未读数
             const { msgUnreadNum } = action.data
             return { ...state, unread: msgUnreadNum }
 
-        case RECEIVE_CHAT_MSG: // 收到消息时
+        case types.RECEIVE_CHAT_MSG: // 收到消息时
             // 更新 contacts 数据
             let { sendUserInfo, send_id } = action.data
             const contact = state.contacts
@@ -85,12 +82,18 @@ const user = (state = initUser, action) => {
 // 好友的用户基本信息
 const friend = (state = friendInfo, action) => {
     switch (action.type) {
-        case INIT_FRIEND_INFO:
+        case types.INIT_FRIEND_INFO:
             return {...state, info: action.data}
-        case GET_NEW_FRIENDS:
+        case types.GET_NEW_FRIENDS:
             return {...state, newFriend: action.data}
-        case GET_USER_MAILLIST:
+        case types.GET_USER_MAILLIST:
             return {...state, mailList: action.data}
+        case types.SETNEWFRIEND_NUM: // 好友申请数自增1/自减1
+            const { type } = action.data
+            const newFriendNum = type === 'inc' ? state.newFriendNum + 1 : (
+                state.newFriendNum > 0 ? state.newFriendNum - 1 : 0
+            )
+            return {...state, newFriendNum}
         default:
             return state
     }
@@ -100,26 +103,26 @@ const friend = (state = friendInfo, action) => {
 const chat = (state = initChatInfo, action) => {
     
     switch (action.type) {
-        case INIT_CHAT_INFO:
-            return handleChatInfoLoading(state, action.data)
+        case types.INIT_CHAT_INFO:
+            return funs.handleChatInfoLoading(state, action.data)
 
-        case INIT_MESS_LIST: // 初始化消息列表
-            return initMessList(state, action.data)
+        case types.INIT_MESS_LIST: // 初始化消息列表
+            return funs.initMessList(state, action.data)
 
-        case SEND_CHAT_MSG:    /* 发送消息 */
-        case RECEIVE_CHAT_MSG: /* 接收消息 */
-            return handleMessSendRecv(state, action.data)
+        case types.SEND_CHAT_MSG:    /* 发送消息 */
+        case types.RECEIVE_CHAT_MSG: /* 接收消息 */
+            return funs.handleMessSendRecv(state, action.data)
 
-        case APPEND_MESSLIST: // 追加消息并更新当前窗口的状态
-            return handleMessAppend(state, action.data)
+        case types.APPEND_MESSLIST: // 追加消息并更新当前窗口的状态
+            return funs.handleMessAppend(state, action.data)
 
-        case HIDDEN_MORETEXT: // 隐藏窗口中加载更多文字
-            return hideShowMoreText(state, action.data)
+        case types.HIDDEN_MORETEXT: // 隐藏窗口中加载更多文字
+            return funs.hideShowMoreText(state, action.data)
 
-        case WITHDRAW_MESSAGE: // 消息撤回
-            return withDrawMessageFun(state, action.data)
+        case types.WITHDRAW_MESSAGE: // 消息撤回
+            return funs.withDrawMessageFun(state, action.data)
 
-        case CHANGE_RIGHT_TYPE:
+        case types.CHANGE_RIGHT_TYPE:
             return {...state, ...action.data}
         default:
             return state

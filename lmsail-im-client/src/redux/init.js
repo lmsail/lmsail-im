@@ -2,7 +2,8 @@ import {
     CHANGE_RIGHT_TYPE, INIT_CHAT_INFO, INIT_FRIEND_INFO, RECEIVE_CHAT_MSG, SEND_CHAT_MSG,
     AUTH_SUCCESS, ERR_MSG, USERINFO, LOGOUT, MODIFY_USER_CONTACTS, GET_NEW_FRIENDS,
     GET_USER_MAILLIST, SET_GLOBAL_SOCKET, USERSEARCH_LIST, SET_REDIRECT_PATH, SET_RESPONSE_MSG,
-    INIT_MESS_LIST, UPDATE_UNREADNUM, APPEND_MESSLIST, HIDDEN_MORETEXT, WITHDRAW_MESSAGE
+    INIT_MESS_LIST, UPDATE_UNREADNUM, APPEND_MESSLIST, HIDDEN_MORETEXT, WITHDRAW_MESSAGE, SETNEWFRIEND_NUM,
+    USERSESSION_LIST
 } from "./action-type";
 
 // 全局对象
@@ -38,10 +39,10 @@ export const initChatInfo = {
 
 // 存储当前点击的用户信息
 export const friendInfo = {
-    newFriend: [],
-    mailList: [],
-    info: {},
-    newFriendNum: 0
+    newFriend: [],   // 好友请求列表
+    mailList: [],    // 通讯录列表
+    info: {},        // 当前进入好友详情
+    newFriendNum: 0, // 新的好友请求
 }
 
 // 同步 Action
@@ -54,6 +55,8 @@ export const showFriendInfo = friend => ({type: INIT_FRIEND_INFO, data: friend})
 export const appendMesslist = data => ({ type: APPEND_MESSLIST, data })
 export const hiddenMoreText = data => ({ type: HIDDEN_MORETEXT, data })
 export const withDrawMessage = data => ({type: WITHDRAW_MESSAGE, data})
+export const recvNewFriend = data => ({type: SETNEWFRIEND_NUM, data})
+export const userSessionList = data => ({type: USERSESSION_LIST, data})
 
 // 用户相关
 export const authSuccess = user => ({type: AUTH_SUCCESS, data: user})

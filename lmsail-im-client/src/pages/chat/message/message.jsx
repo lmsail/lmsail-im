@@ -10,6 +10,8 @@ class Message extends Component {
     state = { loadmore: false, message_id: 0 }
 
     componentDidMount() {
+        this.scrollToBottom()
+
         // 消息首次加载完成
         PubSub.subscribe('messFirstLoadDone', () => this.scrollToBottom())
 
@@ -46,7 +48,8 @@ class Message extends Component {
     }
 
     scrollToBottom = () => {
-        this.messagesEnd.scrollIntoView({behavior: 'auto'});
+        if(this.messagesEnd)
+            this.messagesEnd.scrollIntoView();
     }
 
     // 获取加载更多的文字提示
@@ -135,7 +138,8 @@ class Message extends Component {
         }
     }
 
-    // 消息撤回
+    // 消息撤回 - 有待改进
+    // 缺陷 xxx撤回了一条消息，xxx显示的用户原昵称，而非备注
     withdraw = () => {
         const { message_id } = this.state
         const { chat: { chatUserInfo: { friend_id } }, user: { userInfo: { id, nickname } } } = this.props

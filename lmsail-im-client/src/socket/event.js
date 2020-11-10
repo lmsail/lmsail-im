@@ -3,7 +3,7 @@
  */
 import { message as AM } from 'antd'
 import store from '../redux/store'
-import { setSocketObject, initMain, initMessList, recvChatMsg, withDrawMsgAction, logout } from '../redux/actions'
+import { setSocketObject, initMain, initMessList, recvChatMsg, withDrawMsgAction, addFriendCall, handleFriendVerify, logout } from '../redux/actions'
 
 // 连接成功
 export const connect = socket => {
@@ -49,6 +49,24 @@ export const withdraw = message => {
     store.dispatch(withDrawMsgAction(message))
 }
 
+/**
+ * 好友申请消息
+ * @param {*} message 
+ */
+export const addFriend = message => {
+    store.dispatch(addFriendCall(message))
+}
+
+/**
+ * 好友验证处理后的回调
+ * @param {*} message 
+ */
+export const handleFriend = message => {
+    console.log('xx处理了您的好友请求', message)
+    const { friend_id, option, sessionList } = message
+    store.dispatch(handleFriendVerify(friend_id, option, sessionList, 'handle'))
+}
+
 // 授权验证失败事件
 export const authError = () => {
     AM.error('登录信息已过期，请重新登录！')
@@ -65,6 +83,6 @@ export const connectError = message => {
 // 连接断开事件
 export const disconnect = err => {
     // console.log('socket连接断开事件', err)
-    AM.error('消息服务器未开启，即将退出!!')
-    setTimeout(() => store.dispatch(logout()), 1000)
+    AM.error('消息服务器连接断开，等待重连...')
+    // setTimeout(() => store.dispatch(logout()), 1000)
 }

@@ -1,9 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { User } from "src/entity/user.model";
 import { Util } from "src/utils/util";
+import { AddFriendDto, HandleFriendDto } from "src/validata/friend.validata";
 import { CacheService } from "../cache/cache.service";
 import { ContactService } from "../contact/contact.service";
 import { FriendService } from "../friend/friend.service";
 import { MessageService } from "../message/message.service";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class EventsService {
@@ -11,7 +14,8 @@ export class EventsService {
         private readonly friendService: FriendService,
         private readonly contactService: ContactService,
         private readonly cache: CacheService,
-        private readonly message: MessageService
+        private readonly message: MessageService,
+        private readonly userService: UserService
     ) {}
 
     /**
@@ -54,6 +58,39 @@ export class EventsService {
             return Util.Error(response.message);
         }
         return Util.Error('非本人发送的消息，不可撤回');
+    }
+
+    /**
+     * 添加好友
+     * @param data 
+     */
+    async addFiendVerify(data: AddFriendDto, user_id: number): Promise<Boolean | User> {
+        const response = await this.friendService.addFriendApply(data, user_id);
+        if(response.code === 200) {
+            const userInfo = await this.userService.findUserById(user_id);
+            if(userInfo.code === 200) {
+                return userInfo.data;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * 处理好友申请
+     * @param data { friend_id, option }
+     * @param user_id 
+     */
+    async handleFriend(data: HandleFriendDto, user_id: number): Promise<Boolean> {
+        const response = await this.friendService.handleFriendApply(data, user_id);
+        if(response.code === 200) {
+            if(data.option === 1) { // 动作是通过则自动发送打招呼信息
+                const messRes = await this.message.insertMessage(user_id, data.friend_id, '我们已经是好友啦');
+                const sessRes = await this.addSessionRecord(user_id, data.friend_id, '我们已经是好友啦');
+                return messRes.code === 200 && sessRes;
+            }
+        }
+        return false;
     }
 
     /**

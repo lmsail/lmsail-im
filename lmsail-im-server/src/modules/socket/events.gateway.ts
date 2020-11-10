@@ -6,6 +6,7 @@ import { User } from 'src/entity/user.model';
 import { jwtConstants } from 'src/config/app.pro';
 import { UserService } from '../user/user.service';
 import { EventsService } from './events.service';
+import { HandleFriendDto } from 'src/validata/friend.validata';
 
 @WebSocketGateway()
 export class EventsGateway {
@@ -108,6 +109,37 @@ export class EventsGateway {
         const result = await this.eventService.handleWithDrawEvent(data, client['user']['nickname']);
         if(result) {
             this.server.to(friend_id).emit('withdraw', data); // 给当前聊天室推送消息
+        }
+    }
+
+    /**
+     * 订阅好友申请消息
+     */
+    @SubscribeMessage('addfriend')
+    async handleAddFrien(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
+        const { friend_id, remark } = data;
+        const response = await this.eventService.addFiendVerify(data, client['user'].id);
+        if(response) {
+            this.server.to(friend_id).emit('addfriend', { remark, userInfo: response});
+        }
+    }
+
+    /**
+     * 订阅处理好友申请消息
+     * 1、更新好友申请状态
+     * 2、如果是动作是通过 => 自动发送一条打招呼消息
+     */
+    @SubscribeMessage('handlefriend')
+    async handleFrienVerify(@ConnectedSocket() client: Socket, @MessageBody() data: HandleFriendDto): Promise<void> {
+        const result = await this.eventService.handleFriend(data, client['user'].id);
+        if(result) {
+            const { friend_id, option } = data;
+            if(option === 1) this.server.to(String(friend_id)).emit('handlefriend', { 
+                friend_id, option, sessionList: await this.eventService.getSessionList(friend_id)
+            });
+            this.server.to(String(client['user'].id)).emit('handlefriend', { 
+                friend_id, option, sessionList: await this.eventService.getSessionList(client['user'].id)
+            });
         }
     }
 

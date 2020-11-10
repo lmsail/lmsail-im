@@ -37,7 +37,6 @@ class NewFriend extends Component {
     }
 
     createOptionButton = user => {
-        console.log('用户信息', user)
         const { user_id, status } = user
         const statusTemp = {
             0: [<Button type="primary" onClick={() => this.handleVerify(user_id, 1)}>接受</Button>, <Button type="danger" onClick={() => this.handleVerify(user_id, 2)}>拒绝</Button>],

@@ -180,7 +180,7 @@ export class FriendService {
      */
     async insertFriendApply(uid: number, friend_id: number, remark: string, status?: number): Promise<boolean> {
         const result = await this.friendModel.save({
-            user_id: uid, friend_id, target_id: uid, remark, status, created_at: Util.CurrentTime()
+            user_id: uid, friend_id, target_id: uid, remark: remark || '你好，交个朋友吧！', status, created_at: Util.CurrentTime()
         });
         return !!result;
     }

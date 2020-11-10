@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, Not } from "typeorm";
 import { Util } from "../../utils/util";
 import { Friend } from "../../entity/friend.model";
 import { AddFriendDto, HandleFriendDto, RemarkFriendDto } from "../../validata/friend.validata";
@@ -79,6 +79,16 @@ export class FriendService {
                 f.status ASC
         `);
         return Util.Success('获取好友验证列表成功！', list);
+    }
+
+    /**
+     * 获取好友申请数量
+     * @param uid 
+     */
+    async findVerifyFriendCount(uid: number): Promise<number> {
+        return await this.friendModel.count({
+            where: { friend_id: uid, target_id: Not(uid), status: 0 }
+        });
     }
 
     /**

@@ -140,6 +140,7 @@ class Message extends Component {
 
     // 消息撤回 - 有待改进
     // 缺陷 xxx撤回了一条消息，xxx显示的用户原昵称，而非备注
+    // TODO 找个时间再来完善吧
     withdraw = () => {
         const { message_id } = this.state
         const { chat: { chatUserInfo: { friend_id } }, user: { userInfo: { id, nickname } } } = this.props

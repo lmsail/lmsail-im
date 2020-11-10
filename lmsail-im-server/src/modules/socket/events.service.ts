@@ -129,6 +129,14 @@ export class EventsService {
     }
 
     /**
+     * 获取好友申请数量
+     * @param uid 
+     */
+    async getNewFriendNum(uid: number): Promise<number> {
+        return await this.friendService.findVerifyFriendCount(uid);
+    }
+
+    /**
      * 检测是否为好友关系
      * @param uid 
      * @param to_uid 

@@ -88,12 +88,14 @@ const friend = (state = friendInfo, action) => {
             return {...state, newFriend: action.data}
         case types.GET_USER_MAILLIST:
             return {...state, mailList: action.data}
-        case types.SETNEWFRIEND_NUM: // 好友申请数自增1/自减1
-            const { type } = action.data
-            const newFriendNum = type === 'inc' ? state.newFriendNum + 1 : (
-                state.newFriendNum > 0 ? state.newFriendNum - 1 : 0
-            )
-            return {...state, newFriendNum}
+        case types.SETNEWFRIEND_NUM: // 好友申请数自增1/自减1/=x
+            const { type, number } = action.data
+            const option = {
+                'inc': state.newFriendNum + 1, 
+                'reduce': state.newFriendNum > 0 ? state.newFriendNum - 1 : 0, 
+                'assign': number
+            };
+            return {...state, newFriendNum: option[type]}
         default:
             return state
     }

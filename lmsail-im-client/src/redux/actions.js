@@ -59,10 +59,11 @@ export const logout = () => {
  * @param {*} data 
  */
 export const initMain = data => {
-    const { userInfo, sessionList, mailList } = data
+    const { userInfo, sessionList, mailList, newFriendNum } = data
     return async dispatch => {
         await dispatch(userLoginInfo({userInfo, contacts: sessionList}))
         await dispatch(getMailList(pySegSort(mailList)))
+        await dispatch(recvNewFriend({type: 'assign', number: newFriendNum}))
         await dispatch(initUnreadNum())
     }
 }
@@ -194,7 +195,7 @@ export const handleFriendVerify = (friend_id, option, sessionList, type = 'send'
         })
         if(option === 1) dispatch(getFriendList()) // 通过后重新获取通讯录列表
         dispatch(getNewFriends(newFriend)) // 获取好友申请列表
-        dispatch(recvNewFriend({type: 'reduce'})) // 好友申请数量自减1
+        dispatch(recvNewFriend({type: 'reduce', number: 0})) // 好友申请数量自减1
         await dispatch(initSessionList(sessionList))
     }
 }
@@ -292,7 +293,7 @@ export const addFriendCall = data => {
         notification.open({
             message: `来自[${userInfo.nickname}]的好友申请`, description: remark || `你好，我是${userInfo.nickname}`
         });
-        await dispatch(recvNewFriend({type: 'inc'}))
+        await dispatch(recvNewFriend({type: 'inc', number: 0}))
     }
 }
 

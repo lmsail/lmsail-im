@@ -9,7 +9,7 @@ export const initMessList = (state, data) => {
     const messKey = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`
     messList[messKey] = list
     // 初始化当前聊天窗口数据状态
-    const loadStatus = list.length >= 15
+    const loadStatus = list && list.length >= 15
     messStatus[messKey] = messStatus[messKey] || { page: 0, showMoreText: loadStatus }
     return { ...state, loading: false, messList  }
 }

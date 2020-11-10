@@ -44,6 +44,7 @@ export class EventsGateway {
                 userInfo,
                 sessionList: await this.eventService.getSessionList(user.id),
                 mailList: await this.eventService.getUserFriendList(user.id),
+                newFriendNum: await this.eventService.getNewFriendNum(user.id), // 好友申请
                 onlineFriend: await this.eventService.getOnlineFriend(user.id, this.onlineUser)
             })); 
             // 用户上线了，给当前上线的在线好友广播消息，用来更新好友在线状态

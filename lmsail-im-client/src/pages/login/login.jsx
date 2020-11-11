@@ -69,8 +69,7 @@ class Login extends Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 this.setState({ loginLoading: true })
-                // setTimeout(() => this.setState({loginLoading: false}), 200)
-                this.props.login(values.username, values.password)
+                this.props.login(values.username, values.password, () => this.setState({ loginLoading: false }))
             }
         })
     }

@@ -38,7 +38,7 @@ class Profile extends Component {
     openMessage = () => {
         let {friend: {info}, user: {contacts}} = this.props
         if(contacts) {
-            if(contacts.findIndex(user => user.friend_id === info.id) < 0) {
+            if(contacts.findIndex(user => user.friend_id === info.friend_id) < 0) {
                 info.created_at = currentTime();  info.last_mess = "[快发送第一条消息吧]"; contacts.unshift(info)
                 this.props.modifyContacts(contacts)
             }

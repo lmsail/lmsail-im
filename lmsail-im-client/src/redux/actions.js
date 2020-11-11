@@ -18,15 +18,18 @@ import { pySegSort, setItem, removeItem, currentTime } from '../utils'
 let socket = null
 
 // 用户登录
-export const login = (username, password) => {
+export const login = (username, password, callBack) => {
     return async dispatch => {
         const response = (await reqLogin({username, password})).data
         if (response.code === 200) {
-            AM.success(response.message)
             setItem('token', response.data.token)
             dispatch(authSuccess(response.data))
+            notification.open({
+                message: `🎉 欢迎登录小站体验！`, description: `可在 ‘添加好友’ 页面，搜索 ‘M先生’（作者）添加好友哦！`
+            });
         } else {
             AM.error(response.message)
+            callBack()
         }
     }
 }
@@ -291,7 +294,7 @@ export const addFriendCall = data => {
     return async dispatch => {
         const { remark, userInfo } = data
         notification.open({
-            message: `来自[${userInfo.nickname}]的好友申请`, description: remark || `你好，我是${userInfo.nickname}`
+            message: `✉️ 来自[${userInfo.nickname}]的好友申请`, description: remark || `你好，我是${userInfo.nickname}`
         });
         await dispatch(recvNewFriend({type: 'inc', number: 0}))
     }

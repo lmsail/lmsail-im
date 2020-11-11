@@ -92,7 +92,7 @@ class Message extends Component {
                         <Row>
                             <Col span={1} style={{ minWidth: "48px" }}>
                                 <Avatar shape="square" size={35} src={item.avatar || chatUserInfo.avatar}/>
-                            </Col>
+                            </Col> 
                             <Col span={20}>
                                 <div className="message">
                                     <span><i dangerouslySetInnerHTML={handleMessage(item.message)} /> <sub>{ friendTimeShow(item.created_at) }</sub></span>

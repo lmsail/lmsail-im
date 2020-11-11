@@ -25,6 +25,9 @@ export class EventsService {
      * @param message 
      */
     async handleMessEvent(id: number, friend_id: number, message: string): Promise<any> {
+        message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
+        message = message.replace(/(\n)/g, '') // 删除所有换行
+        if(message.length <= 0) message = '[不支持的消息内容]';
         await this.addSessionRecord(id, friend_id, message); // 添加会话记录
         await this.addMessageRecord(id, friend_id, message); // 添加消息记录
         await this.contactService.removeUnreadNum(id, friend_id); // 清空消息未读数

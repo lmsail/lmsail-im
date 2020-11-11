@@ -79,10 +79,16 @@ class ChatTextarea extends Component {
         }
     }
 
+    // TODO 适配发送代码片段（保留pre标签）
     sendChatMess = e => {
         e.preventDefault();
-        const { message } = this.state
+        let { message } = this.state
         if(!message) return AM.error('不能发空消息!')
+
+        message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
+        message = message.replace(/(\n)/g, '') // 删除所有换行
+        if(message.length <= 0) message = '[不支持的消息内容]';
+
         this.setState({ message: '' })
         // 追加消息记录并发送 socket 消息
         const { chat: { chatUserInfo }} = this.props

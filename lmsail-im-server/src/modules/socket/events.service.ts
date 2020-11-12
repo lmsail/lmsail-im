@@ -24,12 +24,12 @@ export class EventsService {
      * @param friend_id 
      * @param message 
      */
-    async handleMessEvent(id: number, friend_id: number, message: string): Promise<any> {
+    async handleMessEvent(id: number, friend_id: number, local_message_id: string, message: string): Promise<any> {
         message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
         message = message.replace(/(\n)/g, '') // 删除所有换行
         if(message.length <= 0) message = '[不支持的消息内容]';
         await this.addSessionRecord(id, friend_id, message); // 添加会话记录
-        await this.addMessageRecord(id, friend_id, message); // 添加消息记录
+        await this.message.insertMessage(id, friend_id, local_message_id, message); // 添加消息记录
         await this.contactService.removeUnreadNum(id, friend_id); // 清空消息未读数
         // 查出对发送人基础信息
         return await this.friendService.findSendUserInfo(id, friend_id);
@@ -50,7 +50,8 @@ export class EventsService {
      * @param data { message_id, user_id, friend_id }
      */
     async handleWithDrawEvent(data: any, username: string): Promise<any> {
-        const { message_id, user_id, friend_id } = data
+        const { message_id, user_id, friend_id } = data;
+        if(!message_id) return Util.Error("消息撤回失败！！");
         const isMinMsg = await this.message.isMySelfMessage(message_id, user_id);
         if(isMinMsg) {
             const message = `${username}撤回了一条消息`;
@@ -88,8 +89,9 @@ export class EventsService {
         const response = await this.friendService.handleFriendApply(data, user_id);
         if(response.code === 200) {
             if(data.option === 1) { // 动作是通过则自动发送打招呼信息
-                const messRes = await this.message.insertMessage(user_id, data.friend_id, '我们已经是好友啦');
-                const sessRes = await this.addSessionRecord(user_id, data.friend_id, '我们已经是好友啦');
+                const { friend_id, local_message_id } = data
+                const messRes = await this.message.insertMessage(user_id, friend_id, local_message_id, '我们已经是好友啦');
+                const sessRes = await this.addSessionRecord(user_id, friend_id, '我们已经是好友啦');
                 return messRes.code === 200 && sessRes;
             }
         }
@@ -167,16 +169,6 @@ export class EventsService {
      */
     async getMessageList(id: number, friend_id: number): Promise<any> {
         return await this.message.findMessageList(id, friend_id);
-    }
-
-    /**
-     * 添加消息发送记录
-     * @param uid 
-     * @param friend_id 
-     * @param message 
-     */
-    async addMessageRecord(uid: number, friend_id: number, message: string): Promise<boolean> {
-        return await this.message.insertMessage(uid, friend_id, message);
     }
 
     /**

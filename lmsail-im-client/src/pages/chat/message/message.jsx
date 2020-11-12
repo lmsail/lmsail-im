@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Avatar, Row, Col, Skeleton, Icon, Dropdown, Menu } from 'antd'
+import { Avatar, Row, Col, Skeleton, Icon, Dropdown, Menu, message as AM } from 'antd'
 import PubSub from 'pubsub-js'
 import { friendTimeShow, handleMessage } from '../../../utils'
 import { findMoreMessage, withDrawMsgIns } from '../../../redux/actions'
@@ -125,7 +125,7 @@ class Message extends Component {
             </Menu>
         );
         return (
-            <Dropdown trigger={['contextMenu']} overlay={menu} onVisibleChange={() => this.setMessageId(item.id)}>
+            <Dropdown trigger={['contextMenu']} overlay={menu} onVisibleChange={() => this.setMessageId(item.id || item.local_message_id)}>
                 <span><i dangerouslySetInnerHTML={handleMessage(item.message)} /> <sub>{ friendTimeShow(item.created_at) }</sub></span>
             </Dropdown>
         )
@@ -133,16 +133,17 @@ class Message extends Component {
 
     // 设置当前选中的消息id
     setMessageId = message_id => {
-        if(this.state.message_id !== message_id) {
+        if(message_id && this.state.message_id !== message_id) {
             this.setState({ message_id })
         }
     }
 
     // 消息撤回 - 有待改进
     // 缺陷 xxx撤回了一条消息，xxx显示的用户原昵称，而非备注
-    // TODO 找个时间再来完善吧
+    // TODO 重大BUG，在本地发送消息后缺失消息id，所以撤回是message_id是空
     withdraw = () => {
         const { message_id } = this.state
+        if(!message_id) return AM.error('获取消息id失败，这里待修复！！')
         const { chat: { chatUserInfo: { friend_id } }, user: { userInfo: { id, nickname } } } = this.props
         this.props.withDrawMsgIns({ message_id, friend_id, user_id: id, nickname})
     }

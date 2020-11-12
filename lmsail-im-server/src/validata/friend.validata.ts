@@ -19,6 +19,9 @@ export class HandleFriendDto {
     @IsInt({ message: '必须的整数' })
     friend_id: number
 
+    @ApiProperty({ description: '本地消息id', example: 'local_231231' })
+    local_message_id: string
+
     @ApiProperty({ description: '同意/拒绝 1|同意 2|拒绝', example: 1 })
     @IsNotEmpty({ message: '缺少处理状态值' })
     @IsInt({ message: '必须的整数' })

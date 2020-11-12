@@ -24,6 +24,10 @@ export class Message {
     @Column({ comment: '是否被撤回', default: 1 })
     status: number;
 
+    @ApiProperty()
+    @Column({ comment: '本地消息id' })
+    local_message_id: string;
+
     @ApiProperty({ description: '创建时间' })
     @Column({ default: Util.CurrentTime() })
     created_at: string;

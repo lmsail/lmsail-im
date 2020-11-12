@@ -93,8 +93,8 @@ export class EventsGateway {
     @SubscribeMessage('message')
     async handleMessageEvent(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
         console.log('收到客户端 message 指令消息！', client['user']);
-        const { friend_id, message } = data; const { id } = client['user'];
-        const sendUserInfo = await this.eventService.handleMessEvent(id, friend_id, message);
+        const { friend_id, local_message_id, message } = data; const { id } = client['user'];
+        const sendUserInfo = await this.eventService.handleMessEvent(id, friend_id, local_message_id, message);
         const isOnline = this.onlineUser.indexOf(data.friend_id) > -1;
         this.server.to(friend_id).emit('message', { send_id: id, recv_id: friend_id, message, isOnline, sendUserInfo }); // 给当前聊天室推送消息
     }

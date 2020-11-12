@@ -141,3 +141,18 @@ export const handleMessage = message => {
     message = message.replace(reg, ' <a target="_blank" href="$1$2">$1$2</a> ')
     return {__html: message}
 }
+
+/**
+ * 生成本地消息ID
+ * @description 用于修复自己发送的消息无message_id导致撤回失败的问题
+ */
+export const createMsgID = () => {
+    const count = 10;
+    let arr = [], message_id = 'local_'; 
+    for (let i = 0; i < count; i++) {
+        arr[i] = i + 1;
+    }
+    arr.sort(() => 0.5 - Math.random()); //排序
+    arr.map(item => message_id += item);
+    return message_id;
+}

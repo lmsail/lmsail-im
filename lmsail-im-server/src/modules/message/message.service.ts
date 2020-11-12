@@ -29,9 +29,10 @@ export class MessageService {
      * @param send_id 
      * @param recv_id 
      * @param message 
+     * @param local_message_id 本地消息id
      */
-    async insertMessage(send_id: number, recv_id: number, message: string): Promise<any> {
-        const result = await this.messageModel.save({ send_id, recv_id, message, created_at: Util.CurrentTime() });
+    async insertMessage(send_id: number, recv_id: number, local_message_id: string, message: string): Promise<any> {
+        const result = await this.messageModel.save({ send_id, recv_id, local_message_id, message, created_at: Util.CurrentTime() });
         return Util._Rs(Boolean(result), '添加成功!!', '添加失败!!');
     }
 
@@ -58,9 +59,10 @@ export class MessageService {
      * @param message_id 
      */
     async isMySelfMessage(message_id: number, user_id: number): Promise<Boolean> {
-        const result = await this.messageModel.findOne({
-            where: { send_id: user_id, id: message_id }
-        });
+        const where = typeof message_id === 'number' && !isNaN(message_id) ?
+            { send_id: user_id, id: message_id } :
+            { send_id: user_id, local_message_id: message_id };
+        const result = await this.messageModel.findOne({ where });
         return Boolean(result);
     }
 
@@ -70,7 +72,9 @@ export class MessageService {
      */
     async withDrawMessage(data: any, message: string): Promise<any> {
         const { user_id, friend_id, message_id } = data
-        const delStatus = await this.messageModel.delete({id: message_id});
+        const where = typeof message_id === 'number' && !isNaN(message_id) ?
+            {id: message_id} : {local_message_id: message_id};
+        const delStatus = await this.messageModel.delete(where);
         if(delStatus) {
             const result = await this.messageModel.save({
                 send_id: user_id, recv_id: friend_id, message, status: 0, created_at: Util.CurrentTime()

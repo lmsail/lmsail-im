@@ -62,7 +62,9 @@ export const withDrawMessageFun = (state, data) => {
     const { user_id, friend_id, message_id, nickname } = data
     const key = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`;
     if(messList[key]) {
-        const index = messList[key].findIndex(item => item.id === message_id)
+        const index = messList[key].findIndex(item => {
+            return item.id ? item.id === message_id : item.local_message_id === message_id;
+        })
         messList[key][index]['message'] = `${nickname}撤回了一条消息`
         messList[key][index]['status'] = 0
         messList[key].push(messList[key].splice(index, 1)[0])

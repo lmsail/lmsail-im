@@ -137,8 +137,8 @@ export const changeRightType = type => {
 // 发送消息
 export const pushChatMsg = chat => {
     return async dispatch => {
-        const { recv_id, message } = chat
-        socket.emit('message', { friend_id: recv_id, message })
+        const { recv_id, message, local_message_id } = chat
+        socket.emit('message', { friend_id: recv_id, message, local_message_id })
         await dispatch(sendChatMsg(chat))
         dispatch(initUnreadNum())
     }

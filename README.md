@@ -1,10 +1,10 @@
 # [lmsail-im](http://react-im.lmsail.com/) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![lmsail_im](https://img.shields.io/badge/lmsail_im-v1.0-green.svg)](http://react-im.lmsail.com/)
 
-## 项目介绍 - 具体可进入 client | server 查看 README.me
+## 项目介绍
 🔥 点对点聊天IM应用，前后端分离项目！前端：react；后端：NestJS；群聊后续会加，但是短期内不会，有空的话会把精力放在代码优化上！因为我实在是不想写UI了，懒的连手机端都没适配😄
 
-> 🔥 我的小站：[M先生 - 每一次的努力都是看得见的进步！](http://www.lmsail.com)
-> 🔥 在线体验：[lmsail-im 线上体验站](http://react-im.lmsail.com)
+🔥 我的小站：[M先生 - 每一次的努力都是看得见的进步！](http://www.lmsail.com)
+🔥 在线体验：[lmsail-im 线上体验站](http://react-im.lmsail.com)
 
 ## 测试账号
 
@@ -28,7 +28,7 @@
 
     > 解决方案：本地发送消息时，生成 `local_message_id` 带入服务端存入数据库，物理插入的消息记录通过 `local_message_id` 字段作为标识撤回消息
 
-**2020-11-14**
+**2020-11-13**
 
 - 新增消息右键复制功能（可选择部分文字右键复制）
 - 新增会话列表移除功能

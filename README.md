@@ -1,19 +1,19 @@
 # [lmsail-im](http://react-im.lmsail.com/) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![lmsail_im](https://img.shields.io/badge/lmsail_im-v1.0-green.svg)](http://react-im.lmsail.com/)
 
-## 项目介绍
-🎉 点对点聊天IM应用，前后端分离项目！前端：react；后端：NestJS；群聊后续会加，但是短期内不会，有空的话会把精力放在代码优化上！因为我实在是不想写UI了，懒的连手机端都没适配😄  
+## 🎉 项目介绍
+点对点聊天IM应用，前后端分离项目！前端：react；后端：NestJS；群聊后续会加，但是短期内不会，有空的话会把精力放在代码优化上！因为我实在是不想写UI了，懒的连手机端都没适配😄  
 
 🔥 我的小站：[M先生 - 每一次的努力都是看得见的进步！](http://www.lmsail.com)  
 🌐 在线体验：[lmsail-im 线上体验站](http://react-im.lmsail.com)  
 
-## 测试账号
+## 💎 测试账号
 
 > lmsail 123456
 > mayun  123456   
 > shuang 123456  
 > songqian 123456  
 
-## 更新记录 
+## 👀 更新记录 
 
 **2020-11-10**
 
@@ -36,7 +36,7 @@
 - 对用户手机号进行 `脱敏处理`，即隐藏手机号中间六位 [服务端层面]
 - 部分 BUG 修复
 
-## 前端技术栈
+## 🌱 前端技术栈
 
 |  库/框架  | 文档地址 | 
 | :--: | :-----: | 
@@ -47,7 +47,7 @@
 |  PubSub   |  [PubSub 文档（https://www.npmjs.com/package/pubsub-js）](https://www.npmjs.com/package/pubsub-js)  | 
 |  socketIO   | [socket.io 文档（https://socket.io/docs/v3/index.html）](https://socket.io/docs/v3/index.html)   | 
 
-## 后端技术栈
+## 🌴 后端技术栈
 
 |  库/框架  | 文档地址 | 
 | :--: | :-----: | 
@@ -59,6 +59,6 @@
 |  swagger   |    [swagger 文档（https://www.npmjs.com/package/@nestjs/swagger）](https://www.npmjs.com/package/@nestjs/swagger)    | 
 
 
-## 开源协议 
+## 💧 开源协议 
 
 `lmsail-im` 遵循 `MIT` 开源协议.

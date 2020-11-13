@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Button, Checkbox, Form, Icon, Input } from "antd"
+import { Button, Checkbox, Form, Icon, Input } from 'antd'
 import { register } from '../../redux/actions'
 import ReactLogo from "../../assets/images/about/react.png"
 

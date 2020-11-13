@@ -29,10 +29,9 @@ class ChatTextarea extends Component {
             <section style={{ position: "relative" }}>
                 <Row className="chat-tools">
                     <Col span={18}>
-                        <Icon type="smile" onClick={e => this.showFace(e)} />
+                        <Tooltip title="emjoy表情"><Icon type="smile" onClick={e => this.showFace(e)} /></Tooltip>
                         <Tooltip title="发送图片"><Icon type="picture" /></Tooltip>
                         <Tooltip title="发送代码片段"><Icon type="code" /></Tooltip>
-                        <Tooltip title="链接自动识别"><Icon type="link" /></Tooltip>
                         <FaceEmjoy parent={ this } showFace={showFace} />
                     </Col>
                     <Col span={6} style={{ textAlign: "right" }}>
@@ -41,8 +40,9 @@ class ChatTextarea extends Component {
                     </Col>
                 </Row>
                 <Input.TextArea className="chat-textarea"
-                       onChange={e => this.handleTextArea('message', e) } placeholder="说点什么吧..."
+                       onChange={e => this.handleTextArea('message', e) } placeholder="聊点什么呢..."
                        onPressEnter={e => this.sendChatMess(e) }
+                       //onKeyDown={e => this.testonkeydown(e)}
                        value={this.state.message}
                 />
                 <Button style={{ float: "right" }} onClick={ e => this.sendChatMess(e) }>发送</Button>
@@ -58,8 +58,7 @@ class ChatTextarea extends Component {
 
     // 接收子组件传值
     getFaceItem = (object, faceEmjoy) => {
-        let { message } = this.state
-        message += faceEmjoy + " "
+        const message = this.state.message + faceEmjoy + " "
         this.setState({ message })
     }
 
@@ -77,28 +76,39 @@ class ChatTextarea extends Component {
         }
     }
 
-    // TODO 适配发送代码片段（保留pre标签）
-    sendChatMess = e => {
+    // 对message基础过滤
+    // TODO 适配消息类型 文字：text/图片：pic/代码：code
+    filterMessage = e => {
         e.preventDefault();
         let { message } = this.state
-        if(!message) return AM.error('不能发空消息!')
-
+        if(!message || (message.replace(/(\n)/g, '')).length === 0) {
+            this.setState({ message: '' })
+            return null
+        }
         message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
-        message = message.replace(/(\n)/g, '') // 删除所有换行
-        if(message.length <= 0) message = '[不支持的消息内容]';
-
+        if(message.length <= 0) message = '[不支持的消息内容]'
+        if(message.length > 500) message += '\n\n❌ [消息内容过长，发送失败] ❌'
         this.setState({ message: '' })
-        // 追加消息记录并发送 socket 消息
-        const { chat: { chatUserInfo }} = this.props
-        let { user: { userInfo, contacts } } = this.props
-        this.props.pushChatMsg({
-            local_message_id: createMsgID(), // 生成本地消息id
-            send_id: userInfo.id,
-            recv_id: chatUserInfo.friend_id,
-            message
-        })
-        PubSub.publish('messListAppend')
-        this.sortContacts(contacts, chatUserInfo, message)
+        return message
+    }
+
+    // 发送消息
+    // TODO 增加消息类型
+    sendChatMess = e => {
+        if (!e.keyCode || (e.keyCode === 13 && !e.shiftKey)) {
+            const message = this.filterMessage(e)
+            if(!message) return AM.error('不能发空消息!')
+            const { chat: { chatUserInfo }} = this.props
+            let { user: { userInfo, contacts } } = this.props
+            this.props.pushChatMsg({
+                local_message_id: createMsgID(), // 生成本地消息id
+                send_id: userInfo.id,
+                recv_id: chatUserInfo.friend_id,
+                message
+            })
+            PubSub.publish('messListAppend')
+            this.sortContacts(contacts, chatUserInfo, message)
+        }
     }
 }
 

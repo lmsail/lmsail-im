@@ -12,16 +12,32 @@ export class ContactService {
     ) {}
 
     /**
+     * 移除指定的会话窗口
+     * @param friend_id 
+     * @param user_id 
+     */
+    async removeContactItem(friend_id: number, user_id: number): Promise<any> {
+        const result = await this.contactModel.delete({ user_id, friend_id });
+        return Util._Rs(Boolean(result), '移除成功!!', '移除失败!!');
+    }
+
+    /**
      * 查询历史会话记录
      * @param uid 
      */
     async findSessionList(uid: number): Promise<any> {
         return await this.contactModel.query(`
-            SELECT c.*, u.nickname, u.avatar, u.area, u.mobile, u.autograph, f.nick_remark 
-            FROM im_contacts c 
-            LEFT JOIN im_users u ON c.friend_id = u.id 
-            LEFT JOIN im_friends f ON f.user_id = c.user_id AND f.friend_id = c.friend_id 
-            WHERE c.user_id = ${uid} ORDER BY c.created_at DESC
+            SELECT 
+                c.*, u.nickname, u.avatar, u.area, u.autograph, f.nick_remark,
+                IF(u.mobile, CONCAT(LEFT(u.mobile, 3), '******', RIGHT(u.mobile, 2)), '') as mobile
+            FROM 
+                im_contacts c 
+            LEFT JOIN 
+                im_users u ON c.friend_id = u.id 
+            LEFT JOIN 
+                im_friends f ON f.user_id = c.user_id AND f.friend_id = c.friend_id 
+            WHERE 
+                c.user_id = ${uid} ORDER BY c.created_at DESC
         `);
     }
 

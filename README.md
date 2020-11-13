@@ -6,19 +6,20 @@
 > 🔥 我的小站：[M先生 - 每一次的努力都是看得见的进步！](http://www.lmsail.com)
 > 🔥 在线体验：[lmsail-im 线上体验站](http://react-im.lmsail.com)
 
-## 测试账号（同线上）
+## 测试账号
 
-> lmsail 123456 (本地账号)  
+> lmsail 123456
 > mayun  123456   
 > shuang 123456  
-> songqian 123456
+> songqian 123456  
 
-## 更新小记 
+## 更新记录 
 
 **2020-11-10**
 
 - 完善了添加好友的流程，改用 socket 通讯，实时推送好友申请消息
 - 新增 消息撤回 功能，不限时间！
+- 增加新消息音效提醒
 - 部分 BUG 修复
 
 **2020-11-12**
@@ -27,14 +28,18 @@
 
     > 解决方案：本地发送消息时，生成 `local_message_id` 带入服务端存入数据库，物理插入的消息记录通过 `local_message_id` 字段作为标识撤回消息
 
-## 其它
+**2020-11-14**
 
-- 新增一个功能，奖励100个 BUG！！
+- 新增消息右键复制功能（可选择部分文字右键复制）
+- 新增会话列表移除功能
+- 发送消息输入框增加 `shift+enter` 换行支持与消息换行的解析支持 
+- 对用户手机号进行 `脱敏处理`，即隐藏手机号中间六位 [服务端层面]
+- 部分 BUG 修复
 
 ## 前端技术栈
 
 - react - [react 中文文档](https://react.docschina.org/)
-- antd-design 3.x - [antd-design 文档](https://3x.ant.design/index-cn)
+- antd-design3.x - [antd-design 文档](https://3x.ant.design/index-cn)
 - redux - [Redux 中文文档](https://www.redux.org.cn/)
 - axios - [axios 中文文档](http://www.axios-js.com/)
 - PubSub - [PubSub 文档](https://www.npmjs.com/package/pubsub-js)
@@ -48,3 +53,7 @@
 - typeorm - [typeorm 中文文档](https://www.bookstack.cn/read/TypeORM-0.2.20-zh/README.md)
 - socketIO - [socket.io 文档](https://socket.io/docs/v3/index.html)
 - swagger - [swagger 文档](https://www.npmjs.com/package/@nestjs/swagger)
+
+## 开源协议 
+
+`lmsail-im` 遵循 `MIT` 开源协议.

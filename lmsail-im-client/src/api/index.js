@@ -34,6 +34,11 @@ export const reqUpdateAvatar = file => Request('/user/avatar', { file })
 export const reqUserSearch = keyword => Request('/user/search', { keyword })
 
 
+/* ------------ 会话模块 ------------ */
+
+// 移除指定的会话窗口
+export const reqDelContactItem = friend_id => Request('/contact/remove', { friend_id })
+
 /* ------------ 好友模块 ------------ */
 
 // 获取通讯录列表

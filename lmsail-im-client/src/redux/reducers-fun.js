@@ -4,6 +4,7 @@
 
 // 初始化当前窗口的聊天记录
 export const initMessList = (state, data) => {
+    console.log('initMessList', state)
     const { messList, messStatus } = state
     const { user_id, friend_id, list } = data
     const messKey = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`

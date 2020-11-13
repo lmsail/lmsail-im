@@ -135,7 +135,7 @@ const twoDigits = number => {
 export const handleMessage = message => {
     // message = message.replace(/<(?!a).*?>/g, '') // 删除所有html标签，只保留a标签
     message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
-    message = message.replace(/(\n)/g, '') // 删除所有换行
+    //message = message.replace(/(\n)/g, '') // 删除所有换行
     if(message.length <= 0) return {__html: '[不支持的消息内容]'};
     const reg = /(http:\/\/|https:\/\/|tcp:\/\/)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/g;
     message = message.replace(reg, ' <a target="_blank" href="$1$2">$1$2</a> ')

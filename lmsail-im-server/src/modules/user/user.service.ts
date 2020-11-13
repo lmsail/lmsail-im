@@ -93,11 +93,14 @@ export class UserService {
         const list = await this.friendModel.query(`
             SELECT
                 f1.id, f1.user_id, f1.friend_id, f1.nick_remark,
-                u.nickname, u.avatar, u.area, u.mobile, u.autograph, u.created_at 
+                u.nickname, u.avatar, u.area, u.autograph, u.created_at,
+                IF(u.mobile, CONCAT(LEFT(u.mobile, 3), '******', RIGHT(u.mobile, 2)), '') as mobile
             FROM
                 im_friends f1
-                INNER JOIN im_friends f2 ON f1.user_id = f2.friend_id AND f1.friend_id = f2.user_id
-                LEFT JOIN im_users u ON f1.friend_id = u.id 
+            INNER JOIN 
+                im_friends f2 ON f1.user_id = f2.friend_id AND f1.friend_id = f2.user_id
+            LEFT JOIN 
+                im_users u ON f1.friend_id = u.id 
             WHERE
                 f1.user_id = ${uid}
             ORDER BY

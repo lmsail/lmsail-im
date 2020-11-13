@@ -19,12 +19,12 @@ import { MessageModule } from './modules/message/message.module';
         RedisModule.register(redisConfig),
         AuthModule,
         UserModule,
+        ContactModule,
         FriendModule,
         MessageModule,
         HomeModule,
         SocketModule,
-        CacheModule,
-        ContactModule
+        CacheModule
     ],
     providers: [ CacheService ],
     exports: [ CacheService ], // 导出全局模块

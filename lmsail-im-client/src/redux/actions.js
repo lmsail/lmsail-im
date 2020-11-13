@@ -10,7 +10,7 @@ import {
 } from './init'
 import { 
     reqFriendVerify, reqLogin, reqLogout, reqFriendList, reqFriendRemark, reqUpdateUinfo, reqUserInfo, 
-    reqUserSearch, reqRegister, reqUpdatePassword, reqHistoryMessage 
+    reqUserSearch, reqRegister, reqUpdatePassword, reqHistoryMessage, reqDelContactItem
 } from '../api'
 import store from './store'
 import { pySegSort, setItem, removeItem, currentTime } from '../utils'
@@ -100,6 +100,19 @@ export const modifyContacts = contacts => {
     }
 }
 
+// 移除指定的会话窗口
+export const removeContactItem = (friend_id, contacts) => {
+    return async dispatch => {
+        const response = (await reqDelContactItem(friend_id)).data
+        if(response.code === 200) {
+            dispatch(modifyContacts(contacts))
+            dispatch(initUnreadNum())
+        } else {
+            AM.error(response.message)
+        }
+    }
+}
+
 /**
  * 初始化socket连接
  * @description 每次点开聊天窗口都会触发
@@ -122,8 +135,29 @@ export const initChatInfo = (chatUserInfo, needSend = true) => {
  */
 export const initMessList = data => {
     return async dispatch => {
+        const { list, friend_id } = data
         await dispatch(initHistoryMsg(data))
+        dispatch(setContactLastMessage(friend_id, getLastMessage(list)))
         PubSub.publish('messFirstLoadDone')
+    }
+}
+
+// 获取聊天数据的最后一条消息
+const getLastMessage = list => {
+    if(list.length === 0) return '快打个招呼开聊吧！'
+    const lastItem = list[list.length - 1]
+    return lastItem.status === 0 ? '[消息撤回]' : lastItem.message 
+}
+
+// 获取当前窗口最后一条聊天数据并修改会话窗口
+const setContactLastMessage = (friend_id, last_message) => {
+    return dispatch => {
+        const { contacts } = (store.getState()).user
+        if(contacts) {
+            const index = contacts.findIndex(item => item.friend_id === friend_id);
+            contacts[index]['last_mess'] = last_message
+            dispatch(modifyContacts(contacts))
+        }
     }
 }
 

@@ -31,8 +31,10 @@ export class MessageService {
      * @param message 
      * @param local_message_id 本地消息id
      */
-    async insertMessage(send_id: number, recv_id: number, local_message_id: string, message: string): Promise<any> {
-        const result = await this.messageModel.save({ send_id, recv_id, local_message_id, message, created_at: Util.CurrentTime() });
+    async insertMessage(send_id: number, recv_id: number, local_message_id: string, message: string, type: string): Promise<any> {
+        const result = await this.messageModel.save({ 
+            send_id, recv_id, local_message_id, message, type, created_at: Util.CurrentTime() 
+        });
         return Util._Rs(Boolean(result), '添加成功!!', '添加失败!!');
     }
 
@@ -82,5 +84,17 @@ export class MessageService {
             return Util._Rs(Boolean(result), '撤回成功!!', '撤回失败!!');
         }
         return Util.Error('消息撤回失败');
+    }
+
+    /**
+     * 图片上传
+     * @param file 
+     * @param user_id 
+     */
+    async handleImgUpload(file): Promise<any> {
+        if(!file) return Util.Error('文件上传错误!!');
+        const filePath = Util.upload(file, 'upload');
+        if(!filePath) return Util.Error('图片上传失败!!');
+        return Util.Success('图片上传成功!!', filePath);
     }
 }

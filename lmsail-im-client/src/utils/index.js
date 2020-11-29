@@ -7,12 +7,12 @@ import { serverUrl } from '../config/config'
 /**
  * 获取缓存 / 设置缓存
  * @description 这里多次一举封装是因为便于后期使用其它缓存方式
- * @param {*} key 
+ * @param {*} key
  */
 export const getItem = key => localStorage.getItem(key);
 export const removeItem = key => localStorage.removeItem(key);
 export const setItem = (key, data) => {
-    typeof data === 'object' ? localStorage.setItem(key, JSON.stringify(data)) 
+    typeof data === 'object' ? localStorage.setItem(key, JSON.stringify(data))
         : localStorage.setItem(key, data)
 }
 
@@ -37,9 +37,9 @@ export const pySegSort = list => {
 
 /**
  * 网络请求
- * @param {*} url 
- * @param {*} data 
- * @param {*} type 
+ * @param {*} url
+ * @param {*} data
+ * @param {*} type
  */
 export const Request = (url, data = {}, type = 'POST') => {
     url = `${serverUrl}${url}`
@@ -51,17 +51,15 @@ export const Request = (url, data = {}, type = 'POST') => {
         }
         return axios.get(url + '?' + paramStr)
     } else {
-        return axios.post(url, data, {
-            headers: {
-                "Authorization": `Bearer ${getItem('token')}`
-            }
-        })
+        let headers = {"Authorization": `Bearer ${getItem('token')}`}
+        if(url.indexOf('upload') >= 0) headers['Content-Type'] = 'multipart/form-data'
+        return axios.post(url, data, { headers })
     }
 }
 
 /**
  * 时间友好格式化
- * @param {*} date 
+ * @param {*} date
  */
 export const friendTimeShow = date => {
     if(!date) return currendHourMin()
@@ -129,8 +127,8 @@ const twoDigits = number => {
 
 /**
  * 处理消息，自动转换消息中的链接
- * 只是别 http | https | tcp 打头的链接 
- * eg: http://www.lmsail.com | https://www.baidu.com | tcp://192.168.0.101:8008 | http://192.168.0.101:8008 
+ * 只是别 http | https | tcp 打头的链接
+ * eg: http://www.lmsail.com | https://www.baidu.com | tcp://192.168.0.101:8008 | http://192.168.0.101:8008
  */
 export const handleMessage = message => {
     // message = message.replace(/<(?!a).*?>/g, '') // 删除所有html标签，只保留a标签
@@ -148,7 +146,7 @@ export const handleMessage = message => {
  */
 export const createMsgID = () => {
     const count = 10;
-    let arr = [], message_id = 'local_'; 
+    let arr = [], message_id = 'local_';
     for (let i = 0; i < count; i++) {
         arr[i] = i + 1;
     }

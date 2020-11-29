@@ -57,4 +57,8 @@ export const reqFriendHandle = ({ friend_id, option }) => Request('/friend/handl
 export const reqFriendRemark = ({ friend_id, remark }) => Request('/friend/remark', { friend_id, remark })
 
 /* ------------ 聊天消息模块 ------------ */
+
+// 历史消息
 export const reqHistoryMessage = ({friend_id, page = 0}) => Request('/message/list', {friend_id, page})
+
+/* ------------ 通用接口 ------------ */

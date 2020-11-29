@@ -5,11 +5,11 @@ import { message as AM, notification } from 'antd'
 import PubSub from 'pubsub-js'
 import {
     initChatData, receiveChatMsg, sendChatMsg, showRightType, showFriendInfo, authSuccess, userLoginInfo,
-    logOut, modifyUserContacts, getNewFriends, getMailList, setGlobalSocket, searchUserList, setRdirectPath, setResponseMsg, 
+    logOut, modifyUserContacts, getNewFriends, getMailList, setGlobalSocket, searchUserList, setRdirectPath, setResponseMsg,
     initHistoryMsg, updateUnReadNum, appendMesslist, hiddenMoreText, withDrawMessage, recvNewFriend, userSessionList
 } from './init'
-import { 
-    reqFriendVerify, reqLogin, reqLogout, reqFriendList, reqFriendRemark, reqUpdateUinfo, reqUserInfo, 
+import {
+    reqFriendVerify, reqLogin, reqLogout, reqFriendList, reqFriendRemark, reqUpdateUinfo, reqUserInfo,
     reqUserSearch, reqRegister, reqUpdatePassword, reqHistoryMessage, reqDelContactItem
 } from '../api'
 import store from './store'
@@ -25,7 +25,7 @@ export const login = (username, password, callBack) => {
             setItem('token', response.data.token)
             dispatch(authSuccess(response.data))
             notification.open({
-                message: `🎉 欢迎登录小站体验！`, description: `可在 ‘添加好友’ 页面，搜索 ‘M先生’（作者）添加好友哦！`
+                message: `🎉 欢迎登录小站，喜欢可以点个小星星✨`, description: `可在 ‘添加好友’ 页面，搜索 ‘M先生’（作者）添加好友哦！`
             });
         } else {
             AM.error(response.message)
@@ -59,7 +59,7 @@ export const logout = () => {
  * 界面信息初始化
  * { userInfo, sessionList, onlineFriend }
  * 当前用户信息 | 历史会话 | 在线的好友
- * @param {*} data 
+ * @param {*} data
  */
 export const initMain = data => {
     const { userInfo, sessionList, mailList, newFriendNum } = data
@@ -86,7 +86,7 @@ export const initSessionList = sessionList => {
  */
 export const initUnreadNum = () => {
     return dispatch => {
-        let msgUnreadNum = 0, newFriendNum = 0 
+        let msgUnreadNum = 0, newFriendNum = 0
         const { contacts } = (store.getState()).user
         contacts.map(item => msgUnreadNum += item.unread_num)
         dispatch(updateUnReadNum({ msgUnreadNum, newFriendNum }))
@@ -116,7 +116,7 @@ export const removeContactItem = (friend_id, contacts) => {
 /**
  * 初始化socket连接
  * @description 每次点开聊天窗口都会触发
- * @param {*} chatUserInfo 
+ * @param {*} chatUserInfo
  */
 export const initChatInfo = (chatUserInfo, needSend = true) => {
     return async dispatch => {
@@ -144,9 +144,9 @@ export const initMessList = data => {
 
 // 获取聊天数据的最后一条消息
 const getLastMessage = list => {
-    if(list.length === 0) return '快打个招呼开聊吧！'
+    if(list.length === 0) return null
     const lastItem = list[list.length - 1]
-    return lastItem.status === 0 ? '[消息撤回]' : lastItem.message 
+    return lastItem.status === 0 ? '[消息撤回]' : lastItem.message
 }
 
 // 获取当前窗口最后一条聊天数据并修改会话窗口
@@ -154,8 +154,9 @@ const setContactLastMessage = (friend_id, last_message) => {
     return dispatch => {
         const { contacts } = (store.getState()).user
         if(contacts) {
-            const index = contacts.findIndex(item => item.friend_id === friend_id);
-            contacts[index]['last_mess'] = last_message
+            const index = contacts.findIndex(item => item.friend_id === friend_id)
+            const message = contacts[index]['last_mess']
+            contacts[index]['last_mess'] = message === 'loading...' ? last_message : message
             dispatch(modifyContacts(contacts))
         }
     }
@@ -171,8 +172,8 @@ export const changeRightType = type => {
 // 发送消息
 export const pushChatMsg = chat => {
     return async dispatch => {
-        const { recv_id, message, local_message_id } = chat
-        socket.emit('message', { friend_id: recv_id, message, local_message_id })
+        const { recv_id, message, local_message_id, type } = chat
+        socket.emit('message', { friend_id: recv_id, message, local_message_id, type })
         await dispatch(sendChatMsg(chat))
         dispatch(initUnreadNum())
     }
@@ -195,7 +196,7 @@ export const setFriendInfo = friendInfo => {
     }
 }
 
-// 获取用户通讯录列表 
+// 获取用户通讯录列表
 export const getFriendList = () => {
     return async dispatch => {
         const response = (await reqFriendList()).data
@@ -322,7 +323,7 @@ export const addFriend = (friend_id, remark) => {
 
 /**
  * 添加好友回执，执行消息提醒等
- * @param {*} data 返回的是发送申请的用户信息 
+ * @param {*} data 返回的是发送申请的用户信息
  */
 export const addFriendCall = data => {
     return async dispatch => {

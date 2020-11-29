@@ -6,7 +6,6 @@ import { HttpexceptionFilter } from "./common/httpexception.filter";
 import { AppModule } from './app.module';
 import { Util } from './utils/util';
 import { env } from './config/app.pro';
-import { join } from 'path';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);

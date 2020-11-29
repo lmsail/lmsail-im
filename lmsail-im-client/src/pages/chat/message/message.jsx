@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import copy from 'copy-to-clipboard'
 import PubSub from 'pubsub-js'
-import { Avatar, Row, Col, Skeleton, Icon, Dropdown, Menu, message as AM } from 'antd'
+import { Avatar, Row, Col, Skeleton, Icon, Dropdown, Menu, Modal, message as AM } from 'antd'
 import { friendTimeShow, handleMessage } from '../../../utils'
 import { findMoreMessage, withDrawMsgIns } from '../../../redux/actions'
 
 class Message extends Component {
 
-    state = { loadmore: false, message_id: 0, message: null }
+    state = { loadmore: false, message_id: 0, message: null, visible: false, previewImage: null }
 
     componentDidMount() {
         this.scrollToBottom()
@@ -22,9 +22,10 @@ class Message extends Component {
         // 监听消息追加/提醒（接收到消息，主动发送消息）
         PubSub.subscribe('messListAppend', () => this.scrollToBottom())
         PubSub.subscribe('playMessageSound', () => this.scrollToBottom())
-    }   
+    }
 
     render() {
+        const { visible, previewImage } = this.state
         const { chat: { chatUserInfo: { friend_id }, loading }, user: { userInfo: { id } } } = this.props
         const key = id > friend_id ? `${friend_id}${id}` : `${id}${friend_id}`
         return (
@@ -33,6 +34,9 @@ class Message extends Component {
                     {this.getLoadMoreDom(key)}
                     {this.getMessList(key)}
                 </Skeleton>
+                <Modal visible={visible} footer={null} onCancel={ () => this.setState({ visible: false }) }>
+                    <img alt="" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
                 <div ref={el => this.messagesEnd = el} />
             </div>
         )
@@ -55,7 +59,7 @@ class Message extends Component {
 
     // 获取加载更多的文字提示
     getLoadMoreDom = key => {
-        const { chat: { messStatus } } = this.props 
+        const { chat: { messStatus } } = this.props
         if(messStatus && messStatus[key]) {
             const { showMoreText } = messStatus[key]
             if(!showMoreText) return null
@@ -103,7 +107,7 @@ class Message extends Component {
                         <Row>
                             <Col span={1} style={{ minWidth: "48px" }}>
                                 <Avatar shape="square" size={35} src={item.avatar || chatUserInfo.avatar}/>
-                            </Col> 
+                            </Col>
                             <Col span={20}>
                                 <div className="message">{this.createDropMessDom(item, 'target')}</div>
                             </Col>
@@ -134,7 +138,7 @@ class Message extends Component {
                 <Menu.Item onClick={() => this.withdraw()}><Icon type="delete" /> 撤回</Menu.Item>
                 <Menu.Item onClick={() => this.copyMessage()}><Icon type="copy" /> 复制</Menu.Item>
             </Menu>
-        ) : <Menu><Menu.Item onClick={() => this.copyMessage()}><Icon type="copy" /> 复制</Menu.Item></Menu>;
+        ) : <Menu><Menu.Item onClick={() => this.copyMessage()}><Icon type="copy" /> 复制</Menu.Item></Menu>
         return (
             <Dropdown trigger={['contextMenu']} overlay={menu} onVisibleChange={() => this.setMessageInfo(item.id || item.local_message_id, item.message)}>
                 {this.createMessContentDom(item)}
@@ -149,8 +153,8 @@ class Message extends Component {
         return item.type === 'text' ? (
             <span><i dangerouslySetInnerHTML={handleMessage(item.message)} /> <sub>{ friendTimeShow(item.created_at) }</sub></span>
         ) : (
-            <span>
-                <img src="http://www.lmsail.com/uploads/images/17522303.jpeg" width="100%" alt="" /> 
+            <span className="normal">
+                <img src={item.message} width="100%" onClick={() => this.picPreview(item.message)} alt="" />
                 <sub>{ friendTimeShow(item.created_at) }</sub>
             </span>
         )
@@ -178,9 +182,14 @@ class Message extends Component {
     copyMessage = () => {
         copy(this.state.message)
     }
+
+    // 查看图片大图
+    picPreview = picPath => {
+        this.setState({ visible: true, previewImage: picPath })
+    }
 }
 
 export default connect(
-    state => ({chat: state.chat, user: state.user}), 
+    state => ({chat: state.chat, user: state.user}),
     { findMoreMessage, withDrawMsgIns }
 )(Message)

@@ -7,7 +7,7 @@ import { initUser, initChatInfo, friendInfo, initGlobalData, responseMsg } from 
 const globalData = (state = initGlobalData, action) => {
     switch (action.type) {
         case types.SET_GLOBAL_SOCKET: // 设置全局socket对象
-            return { socket: action.data } 
+            return { socket: action.data }
         default:
             return state
     }
@@ -18,14 +18,14 @@ const globalData = (state = initGlobalData, action) => {
  * 这种方式虽然实现起来比较繁琐，但是可以提高耦合性，后面根据实际情况再做调整
  * 目前 redux 交互的代码有点杂乱无章，v2版本时考虑重写，毕竟这还是年初边学边做时的产物～～
  * @description 2020-10-26 15:20 新增
- * @param {*} state 
- * @param {*} action 
+ * @param {*} state
+ * @param {*} action
  */
 const globalResponse = (state = responseMsg, action) => {
     switch (action.type) {
         case types.SET_RESPONSE_MSG:
             const { type, page, message } = action.data
-            return { ...state, type, page, message } 
+            return { ...state, type, page, message }
         default:
             return state
     }
@@ -70,7 +70,7 @@ const user = (state = initUser, action) => {
             } else { // 改变位置
                 contact[index]['last_mess'] = sendUserInfo.last_mess
                 contact[index]['created_at'] = sendUserInfo.created_at
-                contact[index]['unread_num'] = sendUserInfo.unread_num ?? contact[index]['unread_num']+1
+                contact[index]['unread_num'] = sendUserInfo.unread_num ?? contact[index]['unread_num'] + 1
                 contact.unshift(contact.splice(index, 1)[0])
             }
             return { ...state, contacts: contact }
@@ -91,8 +91,8 @@ const friend = (state = friendInfo, action) => {
         case types.SETNEWFRIEND_NUM: // 好友申请数自增1/自减1/=x
             const { type, number } = action.data
             const option = {
-                'inc': state.newFriendNum + 1, 
-                'reduce': state.newFriendNum > 0 ? state.newFriendNum - 1 : 0, 
+                'inc': state.newFriendNum + 1,
+                'reduce': state.newFriendNum > 0 ? state.newFriendNum - 1 : 0,
                 'assign': number
             };
             return {...state, newFriendNum: option[type]}
@@ -103,7 +103,7 @@ const friend = (state = friendInfo, action) => {
 
 // 当前查看的消息列表
 const chat = (state = initChatInfo, action) => {
-    
+
     switch (action.type) {
         case types.INIT_CHAT_INFO:
             return funs.handleChatInfoLoading(state, action.data)

@@ -79,9 +79,10 @@ export class UserService {
      */
     async modifyAvatar(file, id: number): Promise<any> {
         if(!file) return Util.Error('文件上传错误!!');
-        const avatar = Util.SaveUserAvatarFile(file.originalname);
-        const result = await this.userModel.save({ id, avatar });
-        return Util._Rs(Boolean(result), '头像修改成功!!', '头像修改失败!!', avatar);
+        const filePath = Util.upload(file, 'avatar');
+        if(!filePath) return Util.Error('文件上传错误!!');
+        const result = await this.userModel.save({ id, avatar: filePath });
+        return Util._Rs(Boolean(result), '头像修改成功!!', '头像修改失败!!', filePath);
     }
 
     /**

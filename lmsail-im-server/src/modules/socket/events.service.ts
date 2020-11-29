@@ -22,18 +22,33 @@ export class EventsService {
      * 处理收到消息事件
      * @param id 
      * @param friend_id 
-     * @param message 
+     * @param message   类型为pic时，会话列表message显示为[图片]
+     * @param type      消息类型：text|pic 
      */
-    async handleMessEvent(id: number, friend_id: number, local_message_id: string, message: string): Promise<any> {
-        message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
-        // message = message.replace(/(\n)/g, '') // 删除所有换行
-        if(message.length <= 0) message = '[不支持的消息内容]';
-        if(message.length > 500) return false;
-        await this.addSessionRecord(id, friend_id, message); // 添加会话记录
-        await this.message.insertMessage(id, friend_id, local_message_id, message); // 添加消息记录
+    async handleMessEvent(id: number, friend_id: number, local_message_id: string, message: string, type: string): Promise<any> {
+        const data = this.handleMessage(message, type); // 根据消息内容进行处理
+        const { realMessage, lastMessage } = data;
+        await this.addSessionRecord(id, friend_id, lastMessage); // 添加会话记录
+        await this.message.insertMessage(id, friend_id, local_message_id, realMessage, type); // 添加消息记录
         await this.contactService.removeUnreadNum(id, friend_id); // 清空消息未读数
-        // 查出对发送人基础信息
-        return await this.friendService.findSendUserInfo(id, friend_id);
+        return await this.friendService.findSendUserInfo(id, friend_id); // 返回发送人基础信息
+    }
+
+    /**
+     * 根据消息内容，处理消息内容
+     * @param message 
+     * @param type 
+     */
+    handleMessage(message: string, type: string): any {
+        let lastMessage = message;
+        if(type === 'pic') { // 图片消息
+            lastMessage = '[图片]';
+        } else {
+            message = message.replace(/<[^>]+>/g, '') // 删除所有html标签
+            if(message.length <= 0) message = '[不支持的消息内容]';
+            if(message.length > 500) message = message.slice(0, 500) + '...';
+        }
+        return { realMessage: message, lastMessage };
     }
 
     /**
@@ -91,7 +106,7 @@ export class EventsService {
         if(response.code === 200) {
             if(data.option === 1) { // 动作是通过则自动发送打招呼信息
                 const { friend_id, local_message_id } = data
-                const messRes = await this.message.insertMessage(user_id, friend_id, local_message_id, '我们已经是好友啦');
+                const messRes = await this.message.insertMessage(user_id, friend_id, local_message_id, '我们已经是好友啦', 'text');
                 const sessRes = await this.addSessionRecord(user_id, friend_id, '我们已经是好友啦');
                 return messRes.code === 200 && sessRes;
             }

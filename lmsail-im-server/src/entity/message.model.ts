@@ -28,6 +28,10 @@ export class Message {
     @Column({ comment: '本地消息id' })
     local_message_id: string;
 
+    @ApiProperty()
+    @Column({ comment: '消息类型，text|pic' })
+    type: string;
+
     @ApiProperty({ description: '创建时间' })
     @Column({ default: Util.CurrentTime() })
     created_at: string;

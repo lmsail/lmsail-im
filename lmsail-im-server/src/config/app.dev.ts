@@ -2,7 +2,7 @@
  * 全局配置, 也可以存储在 env中
  */
 export const env = {
-    appUrl: 'http://127.0.0.1:8008',
+    appUrl: 'http://127.0.0.1',
     title: 'LmSail React-im Server Api',
     apiVersion: 'v1.0',
     apiDesc: `

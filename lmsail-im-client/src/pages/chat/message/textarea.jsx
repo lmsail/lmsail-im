@@ -1,11 +1,14 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
 import PubSub from 'pubsub-js'
-import { Row, Col, Icon, Button, Input, Tooltip, message as AM } from 'antd'
+import axios from 'axios'
+import Dropzone from 'react-dropzone'
+import { Button, Col, Icon, Input, message as AM, Row, Tooltip } from 'antd'
 
-import { pushChatMsg, recvChatMsg, modifyContacts } from '../../../redux/actions'
+import { modifyContacts, pushChatMsg, recvChatMsg } from '../../../redux/actions'
 import FaceEmjoy from '../../../components/message/face'
-import { currentTime, createMsgID } from '../../../utils'
+import { createMsgID, currentTime, getItem } from '../../../utils'
+import { serverUrl } from '../../../config/config'
 
 class ChatTextarea extends Component {
 
@@ -16,57 +19,71 @@ class ChatTextarea extends Component {
     }
 
     componentWillUnmount() {
-        document.onclick = null // 在组件卸载时，取消事件监听，防止内存泄漏
-    }
-
-    handleTextArea = (name, e) => {
-        this.setState({ [name]: e.target.value })
+        document.onclick = null // 在组件卸载时，取消事件监听
     }
 
     render() {
         const { showFace } = this.state
         return (
-            <section style={{ position: "relative" }}>
-                <Row className="chat-tools">
-                    <Col span={18}>
-                        <Tooltip title="emjoy表情"><Icon type="smile" onClick={e => this.showFace(e)} /></Tooltip>
-                        <Tooltip title="发送图片"><Icon type="picture" /></Tooltip>
-                        <Tooltip title="发送代码片段"><Icon type="code" /></Tooltip>
-                        <FaceEmjoy parent={ this } showFace={showFace} />
-                    </Col>
-                    <Col span={6} style={{ textAlign: "right" }}>
-                        <Tooltip title="视频聊天"><Icon type="video-camera" style={{ marginRight: 10 }} /></Tooltip>
-                        <Tooltip title="截图"><Icon type="scissor" /></Tooltip>
-                    </Col>
-                </Row>
-                <Input.TextArea className="chat-textarea"
-                       onChange={e => this.handleTextArea('message', e) } placeholder="聊点什么呢..."
-                       onPressEnter={e => this.sendChatMess(e) }
-                       //onKeyDown={e => this.testonkeydown(e)}
-                       value={this.state.message}
-                />
-                <Button style={{ float: "right" }} onClick={ e => this.sendChatMess(e) }>发送</Button>
-            </section>
+            <Dropzone accept="image/*" multiple={false} maxFiles={2} onDrop={(files) => this.sendPicMsg(this, files)}>
+                {({getRootProps, getInputProps}) => (
+                    <section {...getRootProps({ className: 'dropzone-section' })}>
+                        <input {...getInputProps({disabled: true})} className="drop-input" />
+                        <Row className="chat-tools">
+                            <Col span={18}>
+                                <Tooltip title="表情"><Icon type="smile" onClick={e => this.showFace(e)} /></Tooltip>
+                                <Tooltip title="支持拖拽发送图片"><Icon type="picture" /></Tooltip>
+                                <Tooltip title="发送代码片段"><Icon type="code" /></Tooltip>
+                                <FaceEmjoy parent={ this } showFace={showFace} />
+                            </Col>
+                            <Col span={6} style={{ textAlign: "right" }}>
+                                <Tooltip title="视频聊天"><Icon type="video-camera" style={{ marginRight: 10 }} /></Tooltip>
+                                <Tooltip title="截图"><Icon type="scissor" /></Tooltip>
+                            </Col>
+                        </Row>
+                        <Input.TextArea className="chat-textarea"
+                            onChange={e => this.setMessageValue(e) }
+                            onPressEnter={e => this.sendChatMess(e) }
+                            placeholder="聊点什么呢..."
+                            value={this.state.message}
+                        />
+                        <Button style={{ float: "right" }} onClick={ e => this.sendChatMess(e) }>发送</Button>
+                    </section>
+                )}
+            </Dropzone>
         )
     }
 
+    // 设置消息内容
+    setMessageValue = e => {
+        this.setState({ message: e.target.value })
+    }
+
+    // 显示表情
     showFace = e => {
         e.nativeEvent.stopImmediatePropagation()
-        const {showFace} = this.state
+        const { showFace } = this.state
         this.setState({ showFace: !showFace })
     }
 
     // 接收子组件传值
     getFaceItem = (object, faceEmjoy) => {
-        const message = this.state.message + faceEmjoy + " "
+        let { message } = this.state
+        message = message + faceEmjoy + " "
         this.setState({ message })
     }
 
-    // 修改最后一条消息，并调整位置
-    sortContacts = (contacts, chatUserInfo, message) => {
+    /**
+     * 修改最后一条消息，并调整位置
+     * @param contacts      会话列表
+     * @param chatUserInfo  当前窗口好友信息
+     * @param message       消息内容
+     * @param type          类型
+     */
+    sortContacts = (contacts, chatUserInfo, message, type = 'text') => {
         const index = contacts.findIndex(user => user.friend_id === chatUserInfo.friend_id)
         if(index >= 0) {
-            contacts[index].last_mess = message;
+            contacts[index].last_mess = type === 'text' ? message : '[图片]';
             contacts[index].unread_num = 0;
             contacts[index].created_at = currentTime()
             if(index > 0) {
@@ -76,8 +93,12 @@ class ChatTextarea extends Component {
         }
     }
 
-    // 对message基础过滤
-    // TODO 适配消息类型 文字：text/图片：pic/代码：code
+    /**
+     * 对message基础过滤
+     * TODO 适配消息类型 文字：text/图片：pic
+     * @param e
+     * @returns {string|null}
+     */
     filterMessage = e => {
         e.preventDefault();
         let { message } = this.state
@@ -92,11 +113,47 @@ class ChatTextarea extends Component {
         return message
     }
 
-    // 发送消息
-    // TODO 增加消息类型
-    sendChatMess = e => {
+    /**
+     * 发送图片消息
+     * @param e
+     * @param files 数组-最大支持两张图片（非固定两张可自由调整 maxFiles 的值）
+     */
+    async sendPicMsg(e, files) {
+        if(files.length <= 0) AM.error('只支持发送图片且同时最多可发送两张图片哦！')
+        for (const file of files) {
+            file.preview = URL.createObjectURL(file) // 本地预览图
+            const response = (await this.upload(file)).data
+            if(response.code === 400) return AM.error(response.message())
+            console.log(response)
+            this.sendChatMess(e, response.data, 'pic')
+        }
+    }
+
+    /**
+     * 上传图片 - 疑惑：为什么不能用封装后的请求而必须使用原使的 axios
+     * @param file
+     * @return Promise
+     */
+    async upload(file) {
+        const param = new FormData()  // 创建form对象
+        param.append('file', file)  // 通过append向form对象添加数据
+        return await axios.post(`${serverUrl}/message/upload`, param, {
+            headers: {
+                "Authorization": `Bearer ${getItem('token')}`,
+                "Content-Type": 'multipart/form-data'
+            }
+        })
+    }
+
+    /**
+     * 发送消息
+     * @param {*} e
+     * @param {*} message 为空则取state中message值
+     * @param {*} type    默认为text（文本类型）| pic（图片类型）
+     */
+    sendChatMess = (e, message = null, type = 'text') => {
         if (!e.keyCode || (e.keyCode === 13 && !e.shiftKey)) {
-            const message = this.filterMessage(e)
+            message = message || this.filterMessage(e)
             if(!message) return AM.error('不能发空消息!')
             const { chat: { chatUserInfo }} = this.props
             let { user: { userInfo, contacts } } = this.props
@@ -104,10 +161,11 @@ class ChatTextarea extends Component {
                 local_message_id: createMsgID(), // 生成本地消息id
                 send_id: userInfo.id,
                 recv_id: chatUserInfo.friend_id,
-                message
+                message,
+                type // 消息类型，默认为文本消息类型
             })
             PubSub.publish('messListAppend')
-            this.sortContacts(contacts, chatUserInfo, message)
+            this.sortContacts(contacts, chatUserInfo, message, type)
         }
     }
 }

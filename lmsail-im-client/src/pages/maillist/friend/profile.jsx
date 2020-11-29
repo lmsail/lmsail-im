@@ -39,7 +39,7 @@ class Profile extends Component {
         let {friend: {info}, user: {contacts}} = this.props
         if(contacts) {
             if(contacts.findIndex(user => user.friend_id === info.friend_id) < 0) {
-                info.created_at = currentTime();  info.last_mess = '获取中...'; contacts.unshift(info)
+                info.created_at = currentTime();  info.last_mess = 'loading...'; contacts.unshift(info)
                 this.props.modifyContacts(contacts)
             }
         }

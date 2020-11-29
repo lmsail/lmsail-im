@@ -11,12 +11,12 @@ import { Friend } from 'src/entity/friend.model';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ User, Friend ]),
-        MulterModule.register({
-            storage: diskStorage({
-                destination: `./public/avatar/${Util.CurrentTime(false)}/`,
-                filename: (req, file, cb) => cb(null, Util.Md5(file.originalname).substr(0, 10) + '.' + file.originalname.split('.')[1])
-            }),
-        }),
+        // MulterModule.register({
+        //     storage: diskStorage({
+        //         destination: `./public/avatar/${Util.CurrentTime(false)}/`,
+        //         filename: (req, file, cb) => cb(null, Util.Md5(file.originalname).substr(0, 10) + '.' + file.originalname.split('.')[1])
+        //     }),
+        // }), 
     ],
     controllers: [ UserController ],
     providers: [ UserService ]

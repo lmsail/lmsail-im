@@ -4,7 +4,6 @@
 
 // 初始化当前窗口的聊天记录
 export const initMessList = (state, data) => {
-    console.log('initMessList', state)
     const { messList, messStatus } = state
     const { user_id, friend_id, list } = data
     const messKey = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`
@@ -42,7 +41,7 @@ export const handleChatInfoLoading = (state, data) => {
     const { messList } = state
     const { chatUserInfo: {user_id, friend_id} } = data
     const key = user_id > friend_id ? `${friend_id}${user_id}` : `${user_id}${friend_id}`;
-    const loading = messList[key] ? false : true
+    const loading = !messList[key]
     return {...state, ...data, loading}
 }
 

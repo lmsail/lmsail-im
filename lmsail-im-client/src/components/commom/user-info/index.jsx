@@ -9,12 +9,12 @@ import './user-info.less'
 
 class UserInfo extends Component {
 
-    state = { 
-        avatarVisible: false, 
-        infoVisible: false, 
+    state = {
+        avatarVisible: false,
+        infoVisible: false,
         passwordVisible: false,
         confirmLoading: false,
-        fieldName: null, fieldValue: null, title: null, 
+        fieldName: null, fieldValue: null, title: null,
         oldPassword: null,
         newPassword: null,
         confirmPassword: null,
@@ -82,21 +82,16 @@ class UserInfo extends Component {
 
     // 头像上传前验证 -> 限制格式，大小等
     beforeuploadAvatar = file => {
-        console.log('上传前', file)
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
+        const fileTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+        if (!fileTypes.includes(file.type)) {
             return AM.error('您只能上传JPG/PNG 文件!');
         }
-        const isLt2M = file.size / 1024 < 100;
-        if (!isLt2M) {
-            return AM.error('图片大小必须小于100KB!');
-        }
-        return true;
+        return file.size / 1024 < 100;
     }
 
     // 头像上传进度
     uploadProgress = info => {
-        const { status, response } = info.file 
+        const { status, response } = info.file
         if(status === "uploading") {
             this.setState({ uploadDisabled: true })
         } else if (status === "done") {
@@ -105,7 +100,7 @@ class UserInfo extends Component {
             AM.success("头像上传成功")
         } else {
             this.setState({ uploadDisabled: false })
-            AM.error("头像上传失败")
+            AM.error("头像上传失败, 图片大小必须小于100KB!")
         }
     }
 
@@ -133,8 +128,8 @@ class UserInfo extends Component {
             <div>
                 {/* 头像上传模态框 */}
                 <Modal visible={avatarVisible} title="上传头像" footer={false} onCancel={() => this.changeModalStatus('avatar', false)}>
-                    <Upload.Dragger 
-                        name="file" multiple={false} showUploadList={false} 
+                    <Upload.Dragger
+                        name="file" multiple={false} showUploadList={false}
                         disabled={uploadDisabled}
                         beforeUpload={this.beforeuploadAvatar}
                         action={`${serverUrl}/user/avatar`}
@@ -149,13 +144,13 @@ class UserInfo extends Component {
                 </Modal>
 
                 {/* 更新用户信息的模态框 */}
-                <Modal visible={infoVisible} title={`修改用户${title}`} 
+                <Modal visible={infoVisible} title={`修改用户${title}`}
                     confirmLoading={confirmLoading}
                     onCancel={() => this.changeModalStatus('info', false)}
-                    onOk={this.handleModifyInfo}  
+                    onOk={this.handleModifyInfo}
                 >
                     <Form.Item>
-                        <Input 
+                        <Input
                             key={title} defaultValue={defaultValue}
                             prefix={<Icon type="fire" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             placeholder={`请输入${title}`} onChange={e => this.setFieldValue(e)}
@@ -164,7 +159,7 @@ class UserInfo extends Component {
                 </Modal>
 
                 {/* 修改密码的模态框 */}
-                <Modal visible={passwordVisible} title="修改密码" 
+                <Modal visible={passwordVisible} title="修改密码"
                     onCancel={() => this.changeModalStatus('password', false)}
                     onOk={this.modifyPassword}
                 >
@@ -179,7 +174,7 @@ class UserInfo extends Component {
     // 创建修改密码的输入框
     createFormInput = (field, placeholder) => {
         return <Form.Item>
-            <Input 
+            <Input
                 type="password"
                 prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                 placeholder={`请输入${placeholder}`} onChange={e => this.setInputValue(e, field)}
@@ -214,6 +209,6 @@ class UserInfo extends Component {
 }
 
 export default connect(
-    state => ({user: state.user, globalResponse: state.globalResponse}), 
+    state => ({user: state.user, globalResponse: state.globalResponse}),
     { modifyUserInfo, modifyPassword, syncUserAvatar, logout }
 )(withRouter(UserInfo))

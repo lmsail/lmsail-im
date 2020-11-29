@@ -4,7 +4,7 @@ import {
     GET_USER_MAILLIST, SET_GLOBAL_SOCKET, USERSEARCH_LIST, SET_REDIRECT_PATH, SET_RESPONSE_MSG,
     INIT_MESS_LIST, UPDATE_UNREADNUM, APPEND_MESSLIST, HIDDEN_MORETEXT, WITHDRAW_MESSAGE, SETNEWFRIEND_NUM,
     USERSESSION_LIST
-} from "./action-type";
+} from "./action-type"
 
 // 全局对象
 export const initGlobalData = {
@@ -75,9 +75,7 @@ export const getMailList = list => ({type: GET_USER_MAILLIST, data: list})
 
 // socket 相关 => 设置全局 socket 对象
 export const setGlobalSocket = globalData => ({ type: SET_GLOBAL_SOCKET, data: globalData })
-
 // 设置跳转地址
 export const setRdirectPath = path => ({ type: SET_REDIRECT_PATH, data: path })
-
 // 设置全局响应提示
 export const setResponseMsg = (type, page, message) => ({ type: SET_RESPONSE_MSG, data: {type, page, message} })

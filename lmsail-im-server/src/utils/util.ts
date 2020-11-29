@@ -1,3 +1,5 @@
+import { createWriteStream, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
 import { Md5 } from 'ts-md5';
 import { env } from '../config/app.pro';
 
@@ -69,12 +71,33 @@ export class Util {
     }
 
     /**
-     * 保存用户的头像文件
-     * @param fileName 
+     * 上传图片
+     * @param file 
+     * @param type 
      */
-    static SaveUserAvatarFile(fileName: string): string {
-        const savePath = `/avatar/${this.CurrentTime(false)}/`;
-        return env.appUrl + savePath + this.Md5(fileName).substr(0, 10) + '.' + fileName.split('.')[1];
+    static upload(file: { [x: string]: any; }, type: string = 'avatar'): string {
+        const lawfulSuffix = ['png', 'jpg', 'jpeg', 'gif'];
+        const suffix = (file.originalname).split('.')[1];
+        if(!lawfulSuffix.includes(suffix)) return null;
+
+        const saveName = (this.Md5(file.originalname) + new Date().getTime()).substr(0, 15) + '.' + suffix;
+        const savePath = `${type}/${this.CurrentTime(false)}`;
+        const saveFullPath = join(__dirname, '/', `public/${savePath}/`);
+        this.isDirectory(saveFullPath);
+        createWriteStream(saveFullPath + saveName).write(file.buffer);
+        return `${env.appUrl}/${savePath}/${saveName}`; 
+    }
+
+    /**
+     * 检查路径是否存在，不存在则创建
+     * @param savePath 
+     */
+    static isDirectory(savePath: string): boolean {
+        const exists = existsSync(savePath);
+        if(!exists) {
+            mkdirSync(savePath);
+        }
+        return true;
     }
 
     /**

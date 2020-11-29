@@ -76,6 +76,7 @@ CREATE TABLE `im_message` (
   `message` varchar(255) NOT NULL COMMENT '消息内容',
   `local_message_id` varchar(255) NOT NULL COMMENT '本地消息id',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否撤回',
+  `type` varchar(20) NOT NULL DEFAULT 'text' COMMENT '消息类型：text|pic',
   `created_at` varchar(255) NOT NULL DEFAULT '2020-10-30 17:49:10',
   PRIMARY KEY (`id`),
   KEY `send_id` (`send_id`),

@@ -155,6 +155,7 @@ class Message extends Component {
         ) : (
             <span className="normal">
                 <img src={item.message} width="100%" onClick={() => this.picPreview(item.message)} alt="" />
+                <div style={{ clear: "both" }} />
                 <sub>{ friendTimeShow(item.created_at) }</sub>
             </span>
         )

@@ -29,7 +29,7 @@ class App extends Component {
         if (!token || redirectTo === '/login') return <Redirect to='/login' />
         
         return (
-            <Layout className={['container', this.state.screenType === 'fullscreen-exit' ? 'mini-pattern' : null].join(' ')}>
+            <Layout className={['container', this.state.screenType === 'fullscreen-exit' ? 'mini-pattern' : 'fullscreen-exit'].join(' ')}>
                 <LeftNav parent={this} />
                 <MessageSound /> {/* 新消息提醒音效 */}
                 <Switch>

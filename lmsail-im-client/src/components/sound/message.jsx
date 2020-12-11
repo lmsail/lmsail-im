@@ -10,7 +10,8 @@ class MessageSound extends Component {
     componentDidMount() {
         PubSub.subscribe('playMessageSound', (msg, data) => {
             this.audioSource.load()
-            this.audioSource.play()
+            const promise = this.audioSource.play()
+            promise.catch(error => console.log('不支持直接播放音效'));
         })
     }
 

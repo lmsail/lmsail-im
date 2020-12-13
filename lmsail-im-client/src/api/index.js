@@ -39,6 +39,7 @@ export const reqUserSearch = keyword => Request('/user/search', { keyword })
 // 移除指定的会话窗口
 export const reqDelContactItem = friend_id => Request('/contact/remove', { friend_id })
 
+
 /* ------------ 好友模块 ------------ */
 
 // 获取通讯录列表
@@ -56,9 +57,9 @@ export const reqFriendHandle = ({ friend_id, option }) => Request('/friend/handl
 // 更改好友备注
 export const reqFriendRemark = ({ friend_id, remark }) => Request('/friend/remark', { friend_id, remark })
 
+
 /* ------------ 聊天消息模块 ------------ */
 
 // 历史消息
 export const reqHistoryMessage = ({friend_id, page = 0}) => Request('/message/list', {friend_id, page})
 
-/* ------------ 通用接口 ------------ */

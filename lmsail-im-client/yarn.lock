@@ -1341,11 +1341,6 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
-"@types/js-md5@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.npm.taobao.org/@types/js-md5/download/@types/js-md5-0.4.2.tgz#95b39911e2081bf2915436e61cc345e12459e5bb"
-  integrity sha1-lbOZEeIIG/KRVDbmHMNF4SRZ5bs=
-
 "@types/json-schema@^7.0.3":
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.4.tgz#38fd73ddfd9b55abb1e1b2ed578cb55bd7b7d339"
@@ -6252,11 +6247,6 @@ jest@24.9.0:
     import-local "^2.0.0"
     jest-cli "^24.9.0"
 
-js-md5@^0.7.3:
-  version "0.7.3"
-  resolved "https://registry.npm.taobao.org/js-md5/download/js-md5-0.7.3.tgz#b4f2fbb0b327455f598d6727e38ec272cd09c3f2"
-  integrity sha1-tPL7sLMnRV9ZjWcn447Ccs0Jw/I=
-
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -6669,7 +6659,7 @@ lodash.templatesettings@^4.0.0:
   dependencies:
     lodash._reinterpolate "^3.0.0"
 
-lodash.throttle@^4.0.0:
+lodash.throttle@^4.0.0, lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npm.taobao.org/lodash.throttle/download/lodash.throttle-4.1.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Flodash.throttle%2Fdownload%2Flodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
@@ -9265,15 +9255,6 @@ react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-i
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
-react-keep-alive@^2.5.2:
-  version "2.5.2"
-  resolved "https://registry.npm.taobao.org/react-keep-alive/download/react-keep-alive-2.5.2.tgz#c0b8118f3dd6743323d1662b8368e6ebd649e81a"
-  integrity sha1-wLgRjz3WdDMj0WYrg2jm69ZJ6Bo=
-  dependencies:
-    "@types/js-md5" "^0.4.2"
-    hoist-non-react-statics "^3.3.0"
-    js-md5 "^0.7.3"
-
 react-lazy-load@^3.0.13:
   version "3.0.13"
   resolved "https://registry.npm.taobao.org/react-lazy-load/download/react-lazy-load-3.0.13.tgz#3b0a92d336d43d3f0d73cbe6f35b17050b08b824"
@@ -9283,6 +9264,11 @@ react-lazy-load@^3.0.13:
     lodash.debounce "^4.0.0"
     lodash.throttle "^4.0.0"
     prop-types "^15.5.8"
+
+react-lazyload@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npm.taobao.org/react-lazyload/download/react-lazyload-3.1.0.tgz?cache=0&sync_timestamp=1603445222382&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-lazyload%2Fdownload%2Freact-lazyload-3.1.0.tgz#2d2b172ede29f0a72dc4b329af6f1626ffd637d2"
+  integrity sha1-LSsXLt4p8KctxLMpr28WJv/WN9I=
 
 react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -9388,6 +9374,14 @@ react-scripts@3.4.0:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
+
+react-scroll@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.npm.taobao.org/react-scroll/download/react-scroll-1.8.1.tgz#eb4052265f1606cf60855c981ebcfed1bc3beff3"
+  integrity sha1-60BSJl8WBs9ghVyYHrz+0bw77/M=
+  dependencies:
+    lodash.throttle "^4.1.1"
+    prop-types "^15.7.2"
 
 react-slick@~0.25.2:
   version "0.25.2"

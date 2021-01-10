@@ -47,6 +47,13 @@
 
 - "暴力模式"实现暗黑模式，使用“filter”实现颜色反转以及部分自定义适配
 
+**2020-01-10**
+
+- 重新整合"redux"文件目录（增加了好多文件😨），拆分成多个业务文件，方便业务后续扩展以及减少代码耦合度，美其名曰 -> 解耦
+- 消息页引入`react-scroll`插件，方便日后做滚动方面优化的准备
+- 优化了消息时间的显示，提高美感😯
+- 代码里加入了半成品群聊UI，暂时没时间写了，慢慢填！
+
 ## 🌱 前端技术栈
 
 |  库/框架  | 文档地址 | 
@@ -57,6 +64,7 @@
 |  axios   | [axios 中文文档（http://www.axios-js.com）](http://www.axios-js.com)  | 
 |  PubSub   |  [PubSub 文档（https://www.npmjs.com/package/pubsub-js）](https://www.npmjs.com/package/pubsub-js)  | 
 |  socketIO   | [socket.io 文档（https://socket.io/docs/v3/index.html）](https://socket.io/docs/v3/index.html)   | 
+|  react-scroll   | [react-scroll 文档（https://www.npmjs.com/package/react-scroll）](https://www.npmjs.com/package/react-scroll)   | 
 
 ## 🌴 后端技术栈
 

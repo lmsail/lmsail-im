@@ -4,47 +4,48 @@
 @selectBgColor: #e4e4e4;
 
 /* 适配深色模式 */
-@media (prefers-color-scheme: dark) {
-    body {
-        filter: invert(1) hue-rotate(.5turn);
-    }
-    /* 图片反转 */
-    img, .left-nav, .face-container, .chat-textarea, .message span,.ant-list-item-meta-description {
-        filter: invert(1) hue-rotate(.5turn);
-    }
-    .left-nav .ant-avatar img, .emjoy, .message span img {
-        filter: none!important;
-    }
-    img, .emjoy {
-        opacity: .7;    
-    }
-    .emjoy:hover {
-        background: #21262c!important;
-    }
-    /* 遮罩颜色 */
-    .ant-modal-mask {
-        /* 因为是颜色反转，所以这是是白色，反转成黑色 */
-        background: rgba(255, 255, 255,.5)!important;
-    }
-    /* 聊天消息文字 */
-    .message-left span i, .message-right span i {
-        color: #999!important;
-    }
-    .message-left span, .message-left span:after {
-        background: #0f1117!important;
-        border-color: #0f1117!important;
-    }
-    .message-right span, .message-right span:after {
-        background: #111!important;
-        border-color: #222!important;
-        border-right: 1px solid #111;
-        border-top: 1px solid #111;
-    }
-    .chat-textarea {
-        background: #0a0a0a;
-        color: #999!important;
-    }
-}
+// @media (prefers-color-scheme: dark) {
+//     body {
+//         -webkit-filter: invert(1) hue-rotate(.5turn);
+//         filter: invert(1) hue-rotate(.5turn);
+//     }
+//     /* 图片反转 */
+//     img, .left-nav, .face-container, .chat-textarea, .message span,.ant-list-item-meta-description {
+//         filter: invert(1) hue-rotate(.5turn);
+//     }
+//     .left-nav .ant-avatar img, .emjoy, .message span img {
+//         filter: none!important;
+//     }
+//     img, .emjoy {
+//         opacity: .7;
+//     }
+//     .emjoy:hover {
+//         background: #21262c!important;
+//     }
+//     /* 遮罩颜色 */
+//     .ant-modal-mask {
+//         /* 因为是颜色反转，所以这是是白色，反转成黑色 */
+//         background: rgba(255, 255, 255,.5)!important;
+//     }
+//     /* 聊天消息文字 */
+//     .message-left span i, .message-right span i {
+//         color: #999!important;
+//     }
+//     .message-left span, .message-left span:after {
+//         background: #0f1117!important;
+//         border-color: #0f1117!important;
+//     }
+//     .message-right span, .message-right span:after {
+//         background: #111!important;
+//         border-color: #222!important;
+//         border-right: 1px solid #111;
+//         border-top: 1px solid #111;
+//     }
+//     .chat-textarea {
+//         background: #0a0a0a;
+//         color: #999!important;
+//     }
+// }
 
 // 去除 antd 默认边框
 .ant-input-search .ant-input:focus,
@@ -330,6 +331,7 @@
             height: 62px;
             overflow: hidden;
             z-index: 100;
+            border-bottom: 1px solid @borderColor;
             .ant-avatar {
                 margin-top: -5px;
             }
@@ -341,11 +343,15 @@
         }
         .message-body {
             @height: calc(100% - 210px);
-            min-height: @height;
             max-height: @height;
+            height: @height;;
             overflow: auto;
             background: @basicBgColor;
-            padding: 20px;
+            .containerElement {
+                position: relative;
+                overflow: scroll;
+                padding: 20px
+            }
             .separate {
                 text-align: center;
                 line-height: 30px;
@@ -371,17 +377,24 @@
             }
             .message-time {
                 font-size: 10px;
-                color: #666;
+                color: #888;
                 clear: both;
                 text-align: center;
                 height: 40px;
                 line-height: 40px;
                 user-select:none;
+                margin-bottom: 10px;
                 span {
                     background: #eee;
                     padding: 5px 15px;
                     border-radius: 30px;
                 }
+            }
+            .message-withdraw {
+                text-align: center;
+                line-height: 40px;
+                color: #999;
+                font-size: 12px;
             }
             .message-more {
                 text-align: center;
@@ -786,3 +799,141 @@
         }
     }
 }
+
+/* 群聊页面显示群详情 */
+.group-details {
+    position: absolute;
+    top: 62px;
+    right: -260px;
+    bottom: 0;
+    width: 260px;
+    z-index: 9999;
+    height: calc(100% - 62px);
+    overflow-y: auto;
+    background: @baseBgColor;
+    border-left: 1px solid @borderColor;
+    padding: 15px;
+    .title {
+        font-size: 16px;
+        color: #000;
+        margin-bottom: 15px;
+    }
+    // 群成员
+    .member {
+        height: auto;
+        .member-item {
+            cursor: pointer;
+            margin-bottom: 10px;
+            .username {
+                font-size: 12px;
+                padding-top: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                text-align: center;
+            }
+        }
+    }
+    // 群设置
+    .group-setting {
+        color: #333;
+        .setting-item {
+            height: 40px;
+            line-height: 40px;
+        }
+    }
+    // 离开群
+    .group-leave {
+        color: #ff4d4f;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+}
+
+.group-details.in {
+    right: 0;
+}
+
+// 全局设置
+.text-right {
+    text-align: right;
+}
+
+.text-secondary {
+    color: #999;
+}
+
+.h100 {
+    height: 100%;
+}
+
+// 群头像
+.headGroup {
+    width: 46px;
+    height: 46px;
+    padding: 1px;
+    background-color: #e7e7e7;
+    border-radius: 5px;
+    overflow: hidden;
+    img {
+      float: left;
+      padding: 1px;
+    }
+  }
+  .avatar_1 {
+    img {
+      width: 50%!important;
+      height: 50%;
+      margin: 25%;
+    }
+  }
+  .avatar_2 {
+    img {
+      margin: 25% 0;
+    }
+  }
+  .avatar_2 img,.avatar_3 img,.avatar_4 img {
+    width: 50%!important;
+    height: 50%;
+  }
+  .avatar_3 {
+    img {
+      &:first-child {
+        margin: 0 25%;
+      }
+    }
+  }
+  .avatar_5 img,.avatar_6 img,.avatar_7 img,.avatar_8 img,.avatar_9 img {
+    width: 33.333333%!important;
+    height: 33.333333%;
+  }
+  .avatar_5 {
+    img {
+      &:first-child {
+        margin: 16.6666665% 0 0 16.6666665%;
+      }
+    }
+  }
+  .avatar_5 img:nth-child(2),.avatar_6 img:first-child,.avatar_6 img:nth-child(2),.avatar_6 img:nth-child(3) {
+    margin: 16.6666665% 0 0;
+  }
+  .avatar_7 {
+    img {
+      &:first-child {
+        &:nth-last-child(7) {
+          margin-left: 33.3333333%;
+          margin-right: 33.333333%;
+        }
+      }
+    }
+  }
+  .avatar_8 {
+    img {
+      &:first-child {
+        &:nth-last-child(8) {
+          margin-left: 16.666666%;
+        }
+      }
+    }
+  }
+

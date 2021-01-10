@@ -77,7 +77,7 @@ export class Util {
      */
     static upload(file: { [x: string]: any; }, type: string = 'avatar'): string {
         const lawfulSuffix = ['png', 'jpg', 'jpeg', 'gif'];
-        const suffix = (file.originalname).split('.')[1];
+        const suffix = (file.mimetype).split('/')[1];
         if(!lawfulSuffix.includes(suffix)) return null;
 
         const saveName = (this.Md5(file.originalname) + new Date().getTime()).substr(0, 15) + '.' + suffix;

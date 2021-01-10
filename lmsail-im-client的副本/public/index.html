@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+<!--    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">-->
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app"/>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React IM</title>
+    <style>
+        html, body, #root{
+            height: 100%;
+            background: url("./main-bg.png") no-repeat;
+            background-size: 100% 100%;
+        }
+    </style>
+    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
+    <script>
+        if ('addEventListener' in document) {
+            document.addEventListener('DOMContentLoaded', function() {
+                FastClick.attach(document.body);
+            }, false);
+        }
+        if (!window.Promise) {
+            document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"' + '>' + '<' + '/' + 'script>');
+        }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>

@@ -2,6 +2,9 @@
 @borderColor: #ebebeb;
 @basicBgColor: #f5f5f5;
 @selectBgColor: #e4e4e4;
+@basicRgbaColor: rgba(245, 245, 245, 0.8);
+@baseRgbaBgColor: rgba(255, 255, 255, 0.8);
+@borderRgbaColor: rgba(235, 235, 235, 0.8);
 
 /* 适配深色模式 */
 // @media (prefers-color-scheme: dark) {
@@ -170,7 +173,7 @@
                 }
             }
         }
-        .github, .setting {
+        .github, .left-icon {
             position: absolute;
             color: #989898;
             width: 100%;
@@ -179,7 +182,7 @@
             cursor: pointer;
         }
         .github {
-            bottom: 150px;
+            bottom: 210px;
             a {
                 color: #989898
             }
@@ -187,10 +190,10 @@
                 color: #fff
             }
         }
-        .setting {
+        .left-icon {
             bottom: 30px;
         }
-        .setting:hover, .setting.active {
+        .left-icon:hover, .left-icon.active {
             color: #fff;
         }
     }
@@ -325,13 +328,14 @@
     .message-container {
         height: 100%;
         overflow: hidden;
+        background-size: cover;
         .message-header {
-            background: @baseBgColor;
+            background: @baseRgbaBgColor;
             padding: 0 20px;
             height: 62px;
             overflow: hidden;
             z-index: 100;
-            border-bottom: 1px solid @borderColor;
+            border-bottom: 1px solid @borderRgbaColor;
             .ant-avatar {
                 margin-top: -5px;
             }
@@ -342,11 +346,11 @@
             }
         }
         .message-body {
-            @height: calc(100% - 210px);
+            @height: calc(100% - 208px);
             max-height: @height;
             height: @height;;
             overflow: auto;
-            background: @basicBgColor;
+            background: @basicRgbaColor;
             .containerElement {
                 position: relative;
                 overflow: scroll;
@@ -385,7 +389,7 @@
                 user-select:none;
                 margin-bottom: 10px;
                 span {
-                    background: #eee;
+                    background:rgba(238, 238, 238, 0.8);
                     padding: 5px 15px;
                     border-radius: 30px;
                 }
@@ -545,10 +549,10 @@
             }
         }
         .message-footer {
-            background: @baseBgColor;
+            background: @baseRgbaBgColor;
             text-align: left;
             padding: 10px 20px 16px 18px;
-            border-top: 1px solid @borderColor;
+            border-top: 1px solid @borderRgbaColor;
             position: relative;
             min-height: 146px;
             max-height: 146px;
@@ -556,6 +560,7 @@
             .dropzone-section {
                 position: relative;
                 outline: none;
+                height: 125px;
                 .drop-input {
                     position: absolute;
                     width: 100%;
@@ -626,7 +631,7 @@
             }
             .chat-textarea  {
                 width: 100%;
-                min-height: 70px;
+                height: 110px;
                 padding-right: 24px;
                 white-space: pre-line;
                 border: none;
@@ -634,6 +639,7 @@
                 outline: none;
                 padding-left: 5px;
                 color: #000;
+                background: transparent;
             }
         }
     }
@@ -937,3 +943,33 @@
     }
   }
 
+.gutter-box {
+    height: 120px;
+    margin-bottom: 20px;
+    position: relative;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        &:hover {
+            box-shadow: 0 0 5px #ccc;
+        }
+    }
+    span {
+        position: absolute;
+        color: #fff;
+        font-weight: 600;
+        top: 50%;
+        left: 50%;
+        opacity: 0;
+        cursor: pointer;
+        transition: all .3s linear;
+        transform: translate(-50%, -50%);
+    }
+    &:hover {
+        span {
+            opacity: 1;
+        }
+    }
+}
